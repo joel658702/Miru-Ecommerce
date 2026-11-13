@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Artefactos de build
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Entorno (nunca se commitean secretos)
+.env
+.env.*
+!.env.example
+
+# Volcados y bundles locales
+dumps/
+*.bundle
+
+# Logs y temporales
+*.log
+pnpm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/

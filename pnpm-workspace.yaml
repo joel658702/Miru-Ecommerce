@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 11: scripts de instalación permitidos explícitamente.
+allowBuilds:
+  esbuild: true
+  sharp: true

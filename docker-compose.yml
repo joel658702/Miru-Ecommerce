@@ -1,0 +1,22 @@
+# Miru-Ecommerce · servicios de desarrollo local
+# Redis para BullMQ (apps/worker) y para el entorno local-first.
+# Uso: docker compose up -d
+
+services:
+  redis:
+    image: redis:8-alpine
+    container_name: miru-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  redis-data:

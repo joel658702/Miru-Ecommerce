@@ -1,0 +1,5 @@
+-- Miru-Ecommerce · 0001_init.sql
+--
+-- PLACEHOLDER: este archivo NO contiene SQL de esquema.
+-- El dueño del proyecto pega aquí el SQL aprobado.
+-- Ningún agente debe escribir, reescribir ni completar el esquema desde este archivo.
