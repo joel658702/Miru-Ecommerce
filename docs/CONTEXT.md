@@ -27,6 +27,8 @@ Reglas operativas para agentes: [`../AGENTS.md`](../AGENTS.md).
 | Secretos          | `service_role` y HMAC solo en servidor; `.env` en `.gitignore`                                                        |
 | IA                | Sin PII hacia servicios gratuitos; solo agregados anonimizados                                                        |
 | Proceso           | Una tarea por sesión, un commit por tarea, criterios de aceptación obligatorios                                       |
+| Toolchain         | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, Node 22.22.2; reproducibilidad > novedad                         |
+| Entorno           | Windows + PowerShell; verificaciones secuenciales con `$LASTEXITCODE`; prohibido bash                                 |
 
 ---
 
@@ -113,9 +115,24 @@ docs/            documentación
 - **Un commit por tarea.**
 - **No avanzar sin criterios de aceptación.**
 
+## 13. D-13 · Toolchain fijado
+
+- **TypeScript 5.9.3** (typescript-eslint 8.72.2 exige `<6.1.0`).
+- **pnpm 11.28.5**.
+- **ESLint 10.14.0**.
+- **Next 16.4.6**.
+- **Node 22.22.2**.
+- **Reproducibilidad > novedad.** Prohibido subir versiones sin aprobación.
+
+## 14. D-14 · Entorno
+
+- **Windows + PowerShell.**
+- **Verificaciones secuenciales con `$LASTEXITCODE`.**
+- **Prohibido bash (`&&`, `$?`) en los prompts del proyecto.**
+
 ---
 
-## 13. Diferidos explícitos
+## 15. Diferidos explícitos
 
 | Tema                                        | Estado                                                            |
 | ------------------------------------------- | ----------------------------------------------------------------- |
@@ -123,7 +140,7 @@ docs/            documentación
 
 ---
 
-## 14. Límites de alcance
+## 16. Límites de alcance
 
 Este documento **no** define funcionalidades adicionales, integraciones nuevas ni
 arquitecturas alternativas. Cualquier propuesta fuera de las decisiones anteriores requiere
