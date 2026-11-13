@@ -17,7 +17,7 @@ creadas todavía.
 
 ## 3. Decisiones bloqueadas
 
-Ver AGENTS.md (reglas operativas) y docs/CONTEXT.md (D-01…D-12). No duplicar aquí.
+Ver AGENTS.md (reglas operativas) y docs/CONTEXT.md (registro de decisiones). No duplicar aquí.
 
 ## 4. Mitigaciones del plan gratuito
 
