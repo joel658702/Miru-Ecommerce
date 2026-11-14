@@ -106,13 +106,21 @@ function DashboardContent() {
         >
           <span>Ver todos los pedidos</span>
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            />
           </svg>
         </Link>
       </div>
 
       {/* 8 Primary Financial and Operational KPIs (Fixed Drift) */}
-      <section aria-label="Indicadores financieros clave" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section
+        aria-label="Indicadores financieros clave"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
         {/* 1. Ventas brutas */}
         <KpiCard
           label="Ventas brutas"
@@ -123,7 +131,12 @@ function DashboardContent() {
           accent="cyan"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              />
             </svg>
           }
         />
@@ -136,7 +149,12 @@ function DashboardContent() {
           accent="default"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"
+              />
             </svg>
           }
         />
@@ -151,7 +169,12 @@ function DashboardContent() {
           accent="default"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
             </svg>
           }
         />
@@ -166,7 +189,12 @@ function DashboardContent() {
           accent="emerald"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           }
         />
@@ -179,7 +207,12 @@ function DashboardContent() {
           accent="default"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
             </svg>
           }
         />
@@ -194,7 +227,12 @@ function DashboardContent() {
           accent="emerald"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           }
         />
@@ -209,7 +247,12 @@ function DashboardContent() {
           accent="amber"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+              />
             </svg>
           }
         />
@@ -222,7 +265,12 @@ function DashboardContent() {
           accent="default"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
             </svg>
           }
         />
@@ -244,11 +292,17 @@ function DashboardContent() {
             {/* Legend */}
             <div className="flex items-center gap-4 text-xs font-medium">
               <span className="flex items-center gap-1.5 text-[var(--color-neutral-700)]">
-                <span className="h-3 w-3 rounded-xs bg-[var(--color-primary-bright)]" aria-hidden="true" />
+                <span
+                  className="h-3 w-3 rounded-xs bg-[var(--color-primary-bright)]"
+                  aria-hidden="true"
+                />
                 Despachados
               </span>
               <span className="flex items-center gap-1.5 text-[var(--color-neutral-700)]">
-                <span className="h-3 w-3 rounded-xs bg-[var(--color-accent-emerald)]" aria-hidden="true" />
+                <span
+                  className="h-3 w-3 rounded-xs bg-[var(--color-accent-emerald)]"
+                  aria-hidden="true"
+                />
                 Entregados
               </span>
             </div>
@@ -258,9 +312,30 @@ function DashboardContent() {
           <div className="h-56 w-full pt-4">
             <svg className="w-full h-full" viewBox="0 0 500 200" preserveAspectRatio="none">
               {/* Grid Lines */}
-              <line x1="0" y1="40" x2="500" y2="40" stroke="var(--color-border-subtle)" strokeDasharray="3 3" />
-              <line x1="0" y1="90" x2="500" y2="90" stroke="var(--color-border-subtle)" strokeDasharray="3 3" />
-              <line x1="0" y1="140" x2="500" y2="140" stroke="var(--color-border-subtle)" strokeDasharray="3 3" />
+              <line
+                x1="0"
+                y1="40"
+                x2="500"
+                y2="40"
+                stroke="var(--color-border-subtle)"
+                strokeDasharray="3 3"
+              />
+              <line
+                x1="0"
+                y1="90"
+                x2="500"
+                y2="90"
+                stroke="var(--color-border-subtle)"
+                strokeDasharray="3 3"
+              />
+              <line
+                x1="0"
+                y1="140"
+                x2="500"
+                y2="140"
+                stroke="var(--color-border-subtle)"
+                strokeDasharray="3 3"
+              />
               <line x1="0" y1="175" x2="500" y2="175" stroke="var(--color-border-subtle)" />
 
               {/* Data Bars */}
@@ -337,10 +412,10 @@ function DashboardContent() {
               {data.participacionPlataforma.map((p) => {
                 const color =
                   p.plataforma === "Dropi"
-                    ? "bg-[#4F46E5]"
+                    ? "bg-[var(--color-plataforma-dropi-dot)]"
                     : p.plataforma === "MasterShop"
-                      ? "bg-[#059669]"
-                      : "bg-[#0284C7]";
+                      ? "bg-[var(--color-plataforma-mastershop-dot)]"
+                      : "bg-[var(--color-plataforma-effi-dot)]";
                 return (
                   <div
                     key={p.plataforma}
@@ -361,9 +436,7 @@ function DashboardContent() {
                 >
                   <div className="flex items-center gap-2">
                     <StatusChip domain="plataforma" status={p.plataforma} size="sm" />
-                    <span className="text-[var(--color-neutral-600)]">
-                      {p.pedidos} pedidos
-                    </span>
+                    <span className="text-[var(--color-neutral-600)]">{p.pedidos} pedidos</span>
                   </div>
                   <span className="font-display text-sm font-bold text-[var(--color-neutral-900)] tabular-nums">
                     {p.porcentaje}%
@@ -374,7 +447,9 @@ function DashboardContent() {
           </div>
 
           <div className="rounded-lg bg-[var(--color-surface-canvas)] p-3 border border-[var(--color-border-subtle)] text-xs text-[var(--color-neutral-600)]">
-            <span className="font-semibold text-[var(--color-neutral-900)]">Nota de sincronización: </span>
+            <span className="font-semibold text-[var(--color-neutral-900)]">
+              Nota de sincronización:{" "}
+            </span>
             La ingesta canónica Miru v1 valida HMAC-SHA256 en menos de 500ms para todos los canales.
           </div>
         </div>
