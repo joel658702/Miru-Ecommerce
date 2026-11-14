@@ -1,0 +1,169 @@
+/*
+ * Miru-Ecommerce — theme.css
+ *
+ * Referencia portable de los design tokens del proyecto.
+ * NO se importa en la aplicación: la fuente de verdad es
+ * `apps/web/app/globals.css` (bloque `@theme` de Tailwind v4).
+ * Se usa para prototipos, Stitch u otras herramientas que no leen Tailwind.
+ */
+
+:root {
+  /* Tipografía */
+  --miru-font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --miru-font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --miru-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Marca */
+  --miru-color-primary: #006a6a;
+  --miru-color-primary-hover: #005556;
+  --miru-color-primary-container: #00d2d3;
+  --miru-color-primary-on-container: #002020;
+  --miru-color-primary-bright: #0891b2;
+  --miru-color-on-primary: #ffffff;
+  --miru-color-accent-emerald: #10b981;
+  --miru-color-accent-emerald-dark: #006c49;
+  --miru-color-accent-emerald-container: #6cf8bb;
+  --miru-color-accent-cyan: #00d2d3;
+  --miru-color-accent-amber: #f59e0b;
+  --miru-color-accent-amber-dark: #855300;
+
+  /* Neutrales */
+  --miru-color-neutral-50: #f8fafc;
+  --miru-color-neutral-100: #f1f5f9;
+  --miru-color-neutral-200: #e2e8f0;
+  --miru-color-neutral-300: #cbd5e1;
+  --miru-color-neutral-400: #94a3b8;
+  --miru-color-neutral-500: #64748b;
+  --miru-color-neutral-600: #475569;
+  --miru-color-neutral-700: #334155;
+  --miru-color-neutral-800: #1e293b;
+  --miru-color-neutral-900: #0f172a;
+
+  /* Superficies */
+  --miru-color-surface-canvas: #f8fafc;
+  --miru-color-surface-card: #ffffff;
+  --miru-color-surface-subdued: #f1f5f9;
+  --miru-color-surface-elevated: #faf8ff;
+  --miru-color-surface-inverse: #131b2e;
+  --miru-color-border-subtle: #e2e8f0;
+  --miru-color-border-interactive: #cbd5e1;
+
+  /* Semánticos */
+  --miru-color-success-bg: #ecfdf5;
+  --miru-color-success-text: #047857;
+  --miru-color-success-border: #a7f3d0;
+  --miru-color-success-solid: #059669;
+  --miru-color-warning-bg: #fffbeb;
+  --miru-color-warning-text: #b45309;
+  --miru-color-warning-border: #fde68a;
+  --miru-color-warning-solid: #d97706;
+  --miru-color-danger-bg: #fef2f2;
+  --miru-color-danger-text: #b91c1c;
+  --miru-color-danger-border: #fecaca;
+  --miru-color-danger-solid: #dc2626;
+  --miru-color-info-bg: #ecfeff;
+  --miru-color-info-text: #0e7490;
+  --miru-color-info-border: #a5f3fc;
+  --miru-color-info-solid: #0891b2;
+
+  /* Estados de pedido */
+  --miru-color-pedido-pendiente-bg: #f1f5f9;
+  --miru-color-pedido-pendiente-text: #334155;
+  --miru-color-pedido-pendiente-border: #cbd5e1;
+  --miru-color-pedido-pendiente-dot: #64748b;
+  --miru-color-pedido-confirmado-bg: #eff6ff;
+  --miru-color-pedido-confirmado-text: #1d4ed8;
+  --miru-color-pedido-confirmado-border: #bfdbfe;
+  --miru-color-pedido-confirmado-dot: #2563eb;
+  --miru-color-pedido-en-transito-bg: #ecfeff;
+  --miru-color-pedido-en-transito-text: #0e7490;
+  --miru-color-pedido-en-transito-border: #a5f3fc;
+  --miru-color-pedido-en-transito-dot: #0891b2;
+  --miru-color-pedido-entregado-bg: #ecfdf5;
+  --miru-color-pedido-entregado-text: #047857;
+  --miru-color-pedido-entregado-border: #a7f3d0;
+  --miru-color-pedido-entregado-dot: #059669;
+  --miru-color-pedido-devuelto-bg: #fff7ed;
+  --miru-color-pedido-devuelto-text: #c2410c;
+  --miru-color-pedido-devuelto-border: #fed7aa;
+  --miru-color-pedido-devuelto-dot: #ea580c;
+  --miru-color-pedido-cancelado-bg: #fef2f2;
+  --miru-color-pedido-cancelado-text: #b91c1c;
+  --miru-color-pedido-cancelado-border: #fecaca;
+  --miru-color-pedido-cancelado-dot: #dc2626;
+  --miru-color-pedido-novedad-bg: #fffbeb;
+  --miru-color-pedido-novedad-text: #b45309;
+  --miru-color-pedido-novedad-border: #fde68a;
+  --miru-color-pedido-novedad-dot: #d97706;
+
+  /* Estados de garantía */
+  --miru-color-garantia-solicitada-bg: #f1f5f9;
+  --miru-color-garantia-solicitada-text: #334155;
+  --miru-color-garantia-solicitada-border: #cbd5e1;
+  --miru-color-garantia-solicitada-dot: #64748b;
+  --miru-color-garantia-en-revision-bg: #ecfeff;
+  --miru-color-garantia-en-revision-text: #0e7490;
+  --miru-color-garantia-en-revision-border: #a5f3fc;
+  --miru-color-garantia-en-revision-dot: #0891b2;
+  --miru-color-garantia-aprobada-bg: #ecfdf5;
+  --miru-color-garantia-aprobada-text: #047857;
+  --miru-color-garantia-aprobada-border: #a7f3d0;
+  --miru-color-garantia-aprobada-dot: #059669;
+  --miru-color-garantia-rechazada-bg: #fef2f2;
+  --miru-color-garantia-rechazada-text: #b91c1c;
+  --miru-color-garantia-rechazada-border: #fecaca;
+  --miru-color-garantia-rechazada-dot: #dc2626;
+  --miru-color-garantia-reembolsada-bg: #eff6ff;
+  --miru-color-garantia-reembolsada-text: #1d4ed8;
+  --miru-color-garantia-reembolsada-border: #bfdbfe;
+  --miru-color-garantia-reembolsada-dot: #2563eb;
+
+  /* Plataformas */
+  --miru-color-plataforma-dropi-bg: #eef2ff;
+  --miru-color-plataforma-dropi-text: #3730a3;
+  --miru-color-plataforma-dropi-border: #c7d2fe;
+  --miru-color-plataforma-dropi-dot: #4f46e5;
+  --miru-color-plataforma-mastershop-bg: #ecfdf5;
+  --miru-color-plataforma-mastershop-text: #047857;
+  --miru-color-plataforma-mastershop-border: #a7f3d0;
+  --miru-color-plataforma-mastershop-dot: #059669;
+  --miru-color-plataforma-effi-bg: #f0f9ff;
+  --miru-color-plataforma-effi-text: #0369a1;
+  --miru-color-plataforma-effi-border: #bae6fd;
+  --miru-color-plataforma-effi-dot: #0284c7;
+
+  /* Espaciado (base 4px) */
+  --miru-spacing-1: 4px;
+  --miru-spacing-2: 8px;
+  --miru-spacing-3: 12px;
+  --miru-spacing-4: 16px;
+  --miru-spacing-5: 20px;
+  --miru-spacing-6: 24px;
+  --miru-spacing-8: 32px;
+  --miru-spacing-10: 40px;
+  --miru-spacing-11: 44px;
+  --miru-spacing-12: 48px;
+  --miru-spacing-16: 64px;
+
+  /* Radios */
+  --miru-radius-sm: 4px;
+  --miru-radius-md: 8px;
+  --miru-radius-lg: 12px;
+  --miru-radius-xl: 16px;
+  --miru-radius-2xl: 24px;
+  --miru-radius-full: 9999px;
+
+  /* Sombras */
+  --miru-shadow-level-1: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+  --miru-shadow-level-2:
+    0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --miru-shadow-level-3:
+    0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  --miru-shadow-focus-ring: 0 0 0 3px rgba(0, 210, 211, 0.25);
+
+  /* Breakpoints (referencia) */
+  --miru-breakpoint-sm: 640px;
+  --miru-breakpoint-md: 768px;
+  --miru-breakpoint-lg: 1024px;
+  --miru-breakpoint-xl: 1280px;
+}
