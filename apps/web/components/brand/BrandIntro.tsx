@@ -91,7 +91,7 @@ export function BrandIntro({ onComplete }: BrandIntroProps) {
           </div>
         ) : (
           // Native HTML5 video player (zero extra dependencies, fast, hardware-accelerated)
-          <div className="relative w-72 h-72 flex items-center justify-center overflow-hidden rounded-2xl">
+          <div className="relative w-full max-w-sm aspect-video overflow-hidden rounded-2xl">
             <video
               src="/brand/logo-animated.mp4"
               poster="/brand/logo-poster.svg"
