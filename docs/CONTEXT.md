@@ -56,6 +56,9 @@ docs/            documentación
 
 - **Local-first**: desarrollo con **Supabase CLI (Docker) + Redis (Docker)**.
 - **Sin despliegues a nube todavía.**
+- **Excepción aprobada (2026-11-13)**: despliegue **DEMO temporal en Vercel**
+  (`https://miru-ecommerce-1.vercel.app`) solo para revisión de UI. No es producción, no se
+  conecta a Supabase y no cambia la topología.
 - Producción futura: **VPS Contabo + Cloudflare**.
 - **Vercel descartado.**
 

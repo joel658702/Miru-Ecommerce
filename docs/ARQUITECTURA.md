@@ -15,6 +15,10 @@ descartado para producción (plan Hobby prohíbe uso comercial).
 Fase actual: LOCAL-FIRST. Supabase CLI + Redis en Docker del desarrollador. Sin cuentas nube
 creadas todavía.
 
+Estado actual (13-nov-2026): la WebApp demo está publicada en Vercel
+(https://miru-ecommerce-1.vercel.app) solo para revisión de UI. No es producción, no se
+conecta a Supabase y no cambia la topología objetivo.
+
 ## 3. Decisiones bloqueadas
 
 Ver AGENTS.md (reglas operativas) y docs/CONTEXT.md (registro de decisiones). No duplicar aquí.
@@ -68,3 +72,19 @@ El resto del esquema permanece idéntico. El trigger trg_owner no cambia.
 
 El SQL aprobado lo pega el humano en supabase/migrations/0001_init.sql, aplicando la enmienda
 E-01. Ningún agente lo reescribe.
+
+## 9. Estado actual de la WebApp (demo)
+
+- **Despliegue demo**: https://miru-ecommerce-1.vercel.app — solo para revisión de UI. No es
+  producción y no se conecta a Supabase.
+- **Rutas** (App Router, pre-renderizadas): `/`, `/pedidos`, `/garantias`, `/productos`,
+  `/finanzas`, `/conexiones`, `/login`.
+- **Datos ficticios**: `apps/web/src/data/demo-data-source.ts` detrás de la interfaz
+  `DataSource` (`apps/web/src/data/data-source.ts`), que es el punto de intercambio para P8b.
+- **Sin Supabase todavía**: `/login` muestra «Conexión pendiente (P8b)». No hay Auth ni
+  consultas reales.
+- **Montos**: se formatean con `formatCOP` de `@miru/shared`. `feeMiruCents` y
+  `tasaEntregaEfectiva` son `null` en demo y se muestran como «—»: el fee no se calcula en el
+  cliente (D-05).
+- **Branding**: `apps/web/public/brand/` (SVG, póster y video animado del login).
+- **Build**: `apps/web` compila con `next build --webpack`.

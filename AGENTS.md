@@ -33,6 +33,8 @@ Gestor de paquetes: **pnpm**. No introducir otros gestores ni workspaces paralel
 
 - **Local-first**: desarrollo con **Supabase CLI (Docker) + Redis (Docker)**.
 - **Sin despliegues a nube todavía.**
+- **Excepción de demo**: hay un despliegue **DEMO** en Vercel para revisar la UI; no es
+  producción y no se conecta a Supabase.
 - Producción futura: **VPS Contabo + Cloudflare**.
 - **Vercel está descartado.**
 
