@@ -87,4 +87,10 @@ E-01. Ningún agente lo reescribe.
   `tasaEntregaEfectiva` son `null` en demo y se muestran como «—»: el fee no se calcula en el
   cliente (D-05).
 - **Branding**: `apps/web/public/brand/` (SVG, póster y video animado del login).
-- **Build**: `apps/web` compila con `next build --webpack`.
+- **Build**: `apps/web` construye primero `@miru/shared` (`pnpm --filter @miru/shared build`) y
+  después `next build --webpack`. El paquete compartido se consume desde `dist/`, por eso el
+  orden importa en cualquier entorno limpio.
+- **Despliegue Vercel**: el proyecto apunta a `apps/web` como _Root Directory_ y debe tener
+  activado «Include source files outside of the Root Directory in the Build Step» (si no,
+  `@miru/shared` no existe en el sandbox de build). `apps/web/vercel.json` fija framework,
+  comando de instalación y de build. No se despliega `apps/ingest`.
