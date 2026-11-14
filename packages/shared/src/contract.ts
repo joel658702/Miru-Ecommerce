@@ -12,8 +12,9 @@ import { ORDER_STATUSES } from "./status.js";
 
 const centsSchema = z.number().int().nonnegative();
 
-const isoDateTimeSchema = z.iso.datetime();
-const isoDateTimeWithOffsetSchema = z.iso.datetime({ offset: true });
+// Enmienda C-01: todos los timestamps del contrato aceptan offset explícito
+// (`-05:00`) además de `Z`. Los payloads nativos llegan en hora local de Colombia.
+const isoDateTimeSchema = z.iso.datetime({ offset: true });
 
 const itemSchema = z.object({
   sku: z.string(),
@@ -45,7 +46,7 @@ const orderSchema = z.object({
 export const miruEventV1Schema = z.object({
   event_id: z.string(),
   event_type: z.literal("order.upserted"),
-  occurred_at: isoDateTimeWithOffsetSchema,
+  occurred_at: isoDateTimeSchema,
   order: orderSchema,
 });
 

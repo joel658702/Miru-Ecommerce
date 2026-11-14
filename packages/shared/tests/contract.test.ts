@@ -67,6 +67,19 @@ describe("miruEventV1Schema", () => {
     expect(miruEventV1Schema.safeParse(validPayload()).success).toBe(true);
   });
 
+  it("acepta timestamps con offset -05:00 en el pedido (enmienda C-01)", () => {
+    const payload = validPayload();
+    payload.order.external_created_at = "2026-01-15T10:00:00-05:00";
+    payload.order.external_updated_at = "2026-01-15T10:05:00-05:00";
+    expect(miruEventV1Schema.safeParse(payload).success).toBe(true);
+  });
+
+  it("acepta timestamps en UTC con Z", () => {
+    const payload = validPayload();
+    payload.occurred_at = "2026-01-15T15:30:00Z";
+    expect(miruEventV1Schema.safeParse(payload).success).toBe(true);
+  });
+
   it("rechaza items vacío", () => {
     const payload = validPayload();
     payload.order.items = [];
