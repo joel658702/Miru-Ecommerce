@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" role="img" aria-label="Miru Brand Poster">
+  <defs>
+    <linearGradient id="poster-grad" x1="200" y1="360" x2="600" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#00D2D3" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <radialGradient id="bg-glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#006A6A" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#0B101E" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="600" fill="#0B101E" />
+  <rect width="800" height="600" fill="url(#bg-glow)" />
+
+  <!-- Central Emblem -->
+  <g transform="translate(140, 100) scale(1)">
+    <path
+      d="M 140 270 
+         C 115 270 100 250 115 230 
+         L 230 115 
+         C 245 100 265 100 280 115 
+         L 355 195 
+         C 375 160 395 135 410 135 
+         C 425 135 435 155 435 185 
+         C 435 230 410 260 375 260 
+         C 335 260 305 220 285 195 
+         L 260 170 
+         L 140 270 Z"
+      stroke="url(#poster-grad)"
+      stroke-width="32"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="400" y="470" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="36" font-weight="700" fill="#FFFFFF" letter-spacing="0.1em">
+    MIRU GROW
+  </text>
+  <text x="400" y="505" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-size="14" font-weight="500" fill="#94A3B8" letter-spacing="0.05em">
+    PLATAFORMA CENTRALIZADA DROPSHIPPING
+  </text>
+</svg>

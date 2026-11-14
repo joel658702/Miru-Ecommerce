@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 360" fill="none" role="img" aria-label="Miru Brandmark">
+  <defs>
+    <linearGradient id="miru-gradient" x1="100" y1="300" x2="420" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="45%" stop-color="#00D2D3" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M 120 280 C 105 280 95 268 102 255 L 225 105 C 235 92 252 92 262 105 L 360 220 C 375 238 395 242 405 228 C 415 214 412 185 395 155 C 385 138 375 125 385 110 C 395 95 415 105 422 120 C 445 160 445 220 415 255 C 385 288 340 270 310 230 L 270 180 L 135 280 C 130 280 125 280 120 280 Z"
+    display="none"
+  />
+  <!-- Continuous tube path matching Miru Grow identity -->
+  <path
+    d="M 140 270 
+       C 115 270 100 250 115 230 
+       L 230 115 
+       C 245 100 265 100 280 115 
+       L 355 195 
+       C 375 160 395 135 410 135 
+       C 425 135 435 155 435 185 
+       C 435 230 410 260 375 260 
+       C 335 260 305 220 285 195 
+       L 260 170 
+       L 140 270 Z"
+    stroke="url(#miru-gradient)"
+    stroke-width="32"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

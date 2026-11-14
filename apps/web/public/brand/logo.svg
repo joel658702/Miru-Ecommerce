@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none" role="img" aria-label="Miru-Ecommerce Logo">
+  <defs>
+    <linearGradient id="miru-mark-grad" x1="10" y1="50" x2="60" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#00D2D3" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  <!-- Mark -->
+  <g transform="translate(6, 4) scale(0.15)">
+    <path
+      d="M 140 270 
+         C 115 270 100 250 115 230 
+         L 230 115 
+         C 245 100 265 100 280 115 
+         L 355 195 
+         C 375 160 395 135 410 135 
+         C 425 135 435 155 435 185 
+         C 435 230 410 260 375 260 
+         C 335 260 305 220 285 195 
+         L 260 170 
+         L 140 270 Z"
+      stroke="url(#miru-mark-grad)"
+      stroke-width="32"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+  <!-- Typography -->
+  <text x="80" y="38" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="22" font-weight="700" fill="#0F172A" letter-spacing="-0.03em">
+    Miru<tspan fill="#006A6A">-Ecommerce</tspan>
+  </text>
+</svg>
