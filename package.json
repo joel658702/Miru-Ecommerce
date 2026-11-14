@@ -7,9 +7,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --parallel --filter @miru/web --filter @miru/ingest --filter @miru/worker dev",
+    "dev": "pnpm --filter @miru/shared build && pnpm --parallel --filter @miru/web --filter @miru/ingest --filter @miru/worker dev",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm --filter @miru/shared build && pnpm -r typecheck",
     "test": "pnpm -r test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
