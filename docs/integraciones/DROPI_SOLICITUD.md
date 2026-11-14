@@ -1,7 +1,8 @@
 # Solicitud de documentación oficial — Dropi
 
 **Estado:** borrador listo para enviar. Este archivo **no** se envía solo: lo envía el dueño
-del proyecto desde su correo o el canal de soporte de Dropi.
+del proyecto desde su correo o el canal de soporte de Dropi. Los datos de contacto se completan
+en la copia local, no en el repositorio (es público).
 
 **Motivo:** construir el adaptador nativo → contrato canónico Miru v1 sin inventar endpoints ni
 payloads (D-11). Es el bloqueo externo más largo del proyecto.
@@ -58,7 +59,10 @@ Muchas gracias.
 
 **Joel Miranda**
 Miru-Ecommerce
-[correo de contacto] · [teléfono]
+`[correo de contacto]` · `[teléfono]`
+
+> Antes de enviar: completar correo y teléfono **en tu copia**, no en el repositorio.
+> Son datos de contacto personales y el repositorio es público.
 
 ---
 
