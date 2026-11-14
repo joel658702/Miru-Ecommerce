@@ -105,9 +105,7 @@ export function BrandIntro({ onComplete }: BrandIntroProps) {
         )}
 
         <div className="mt-4 flex flex-col items-center gap-1">
-          <p className="font-display text-xl font-bold tracking-tight text-white">
-            MIRU GROW
-          </p>
+          <p className="font-display text-xl font-bold tracking-tight text-white">MIRU GROW</p>
           <p className="text-xs text-[var(--color-neutral-400)]">
             Ecosistema logístico y financiero
           </p>
