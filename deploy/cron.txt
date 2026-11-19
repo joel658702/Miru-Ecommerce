@@ -1,22 +1,3 @@
-# Tareas programadas del VPS (instalar con `crontab -e` como root)
-
-```cron
-# Mantiene despierto Supabase (plan Free) y comprueba el servicio.
 17 3 * * * /opt/miru/deploy/keepalive.sh >> /var/log/miru-keepalive.log 2>&1
 */15 * * * * /opt/miru/deploy/healthcheck.sh >> /var/log/miru-health.log 2>&1
-
-# Respaldo diario (se activa cuando exista /opt/miru/deploy/.env.backup con DATABASE_URL).
 0 4 * * * test -f /opt/miru/deploy/.env.backup && /opt/miru/deploy/backup.sh >> /var/log/miru-backup.log 2>&1
-```
-
-Instalación de una vez (sin duplicar):
-
-```bash
-chmod +x /opt/miru/deploy/*.sh
-(crontab -l 2>/dev/null; cat /opt/miru/deploy/cron.txt | grep -v '^#' | grep -v '^$') | sort -u | crontab -
-crontab -l
-```
-
-Los logs quedan en `/var/log/miru-*.log`. Para alertas reales, apuntar el
-healthcheck a un monitor externo (UptimeRobot, Better Stack) o a un webhook de
-Telegram/Slack.
