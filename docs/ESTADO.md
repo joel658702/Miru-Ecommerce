@@ -25,6 +25,10 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)           |
 | Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado         |
 | RLS                                | `authenticated` sin membresía → 0 pedidos visibles                 |
+| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)  |
+| Ingesta: duplicado                 | `200 duplicate`                                                    |
+| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión     |
+| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis       |
 
 ## 2. Fases
 
@@ -38,7 +42,7 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Toolchain y CI                             | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, GitHub Actions                                  | **Hecho**                        | —          |
 | Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token | **Hecho** (18-nov-2026)          | —          |
 | Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Hecho** (aprobado 18-nov-2026) | —          |
-| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | Listo para empezar               | Esquema    |
+| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | **Hecho** (19-nov-2026)          | Esquema    |
 | Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | Listo para empezar               | Ingesta    |
 | DataSource real + Realtime (`P8b`, 2/2)    | Consultas con RLS y suscripción a `dashboard_metrics_daily`                                          | Listo para empezar               | Esquema    |
 | Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                        | DataSource |
@@ -64,9 +68,9 @@ Decisiones del fee:
 
 Secuencia siguiente (una fase por sesión):
 
-1. Ingesta Miru v1 en `apps/ingest` (persistir crudo → encolar → ACK < 500 ms).
-2. Worker BullMQ en `apps/worker`.
-3. `DataSource` real en `apps/web` + Realtime del dashboard.
+1. Worker BullMQ en `apps/worker`: procesar `webhook_events` pendientes, aplicar el pedido solo si
+   `external_updated_at` es mayor y marcar `processed_at`.
+2. `DataSource` real en `apps/web` + Realtime del dashboard.
 
 ## 4. Entorno local (notas reales de esta máquina)
 
@@ -74,6 +78,12 @@ Secuencia siguiente (una fase por sesión):
   (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) se copian a
   `apps/web/.env.local`, que está en `.gitignore`. Sin ellas la app entra en **modo demo** y
   `/login` muestra «Conexión pendiente».
+- **Ingesta**: lee `.env` de la raíz del repo (o de `apps/ingest`). Necesita Redis
+  (`docker compose up -d redis`) y arranca con `pnpm --filter @miru/ingest dev`. El transporte
+  está documentado en [`integraciones/MIRU_V1_TRANSPORTE.md`](integraciones/MIRU_V1_TRANSPORTE.md).
+- **Datos de prueba locales** (base de desarrollo, no se commitean): tenant `Tienda Prueba`,
+  conexión Dropi activa y 4 eventos en `webhook_events` con su job en Redis, listos para probar
+  el worker de la siguiente fase.
 - **CLI de Supabase**: el shim `C:\Users\joe\AppData\Roaming\npm\supabase.ps1` **se cuelga** al
   invocarlo (`supabase --version` no responde). Mientras se actualice el CLI (hay v3.x
   disponible), se usa el binario directo:

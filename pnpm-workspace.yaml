@@ -6,3 +6,7 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: true
+  # Acelerador nativo opcional de msgpackr (dependencia de BullMQ). Sin él
+  # msgpackr usa su implementación JS: se deniega explícitamente para que pnpm
+  # no lo reporte como build ignorado.
+  msgpackr-extract: false
