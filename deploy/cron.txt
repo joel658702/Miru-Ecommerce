@@ -5,8 +5,8 @@
 17 3 * * * /opt/miru/deploy/keepalive.sh >> /var/log/miru-keepalive.log 2>&1
 */15 * * * * /opt/miru/deploy/healthcheck.sh >> /var/log/miru-health.log 2>&1
 
-# Respaldo diario (requiere /opt/miru/deploy/.env.backup con DATABASE_URL).
-0 4 * * * /opt/miru/deploy/backup.sh >> /var/log/miru-backup.log 2>&1
+# Respaldo diario (se activa cuando exista /opt/miru/deploy/.env.backup con DATABASE_URL).
+0 4 * * * test -f /opt/miru/deploy/.env.backup && /opt/miru/deploy/backup.sh >> /var/log/miru-backup.log 2>&1
 ```
 
 Instalación de una vez (sin duplicar):
