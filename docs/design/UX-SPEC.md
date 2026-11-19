@@ -18,15 +18,15 @@ Los datos son ficticios y no hay autenticación. Lo que cambia con datos reales 
 
 ## 2. Mapa de rutas
 
-| Ruta          | Título               | Propósito                                      | Estado            |
-| ------------- | -------------------- | ---------------------------------------------- | ----------------- |
-| `/`           | Dashboard General    | Salud operativa y financiera del día           | Demo              |
-| `/pedidos`    | Pedidos              | Listado, búsqueda, filtros y detalle de pedido | Demo              |
-| `/garantias`  | Garantías            | Tablero de garantías por estado y detalle      | Demo              |
-| `/productos`  | Productos            | Catálogo con stock, costo y plataformas        | Demo              |
-| `/finanzas`   | Finanzas             | Ventas, fee, fletes y desglose por plataforma  | Demo              |
-| `/conexiones` | Conexiones           | Estado de integraciones y endpoints de webhook | Demo              |
-| `/login`      | Acceso de Operadores | Entrada al panel                               | Placeholder (P8b) |
+| Ruta          | Título               | Propósito                                      | Estado          |
+| ------------- | -------------------- | ---------------------------------------------- | --------------- |
+| `/`           | Dashboard General    | Salud operativa y financiera del día           | Demo            |
+| `/pedidos`    | Pedidos              | Listado, búsqueda, filtros y detalle de pedido | Demo            |
+| `/garantias`  | Garantías            | Tablero de garantías por estado y detalle      | Demo            |
+| `/productos`  | Productos            | Catálogo con stock, costo y plataformas        | Demo            |
+| `/finanzas`   | Finanzas             | Ventas, fee, fletes y desglose por plataforma  | Demo            |
+| `/conexiones` | Conexiones           | Estado de integraciones y endpoints de webhook | Demo            |
+| `/login`      | Acceso de Operadores | Entrada al panel                               | Auth real (P8b) |
 
 ## 3. Pantallas
 
@@ -75,11 +75,15 @@ el cliente (D-05).
 
 ### 3.7 Login `/login`
 
-- Formulario (correo, contraseña con mínimo 6) **deshabilitado** y aviso «Conexión pendiente
-  (P8b)».
+- Formulario (correo, contraseña con mínimo 6) con validación en cliente y errores accesibles
+  (`role="alert"`, mensajes en español).
+- **Con Supabase configurado**: `signInWithPassword` real; al entrar redirige a `/` y la sesión
+  queda en cookies. Si ya hay sesión se muestra el correo y las acciones «Ir al panel» y
+  «Cerrar sesión».
+- **Sin Supabase configurado** (modo demo): el submit queda deshabilitado y aparece el aviso
+  «Conexión pendiente (P8b)».
 - Enlace «Volver al Dashboard (Modo Demo)».
-- **P8b**: submit real contra Supabase Auth, errores de credenciales, sesión persistida y
-  redirección a `/` con RLS aplicado.
+- **P8b (pendiente)**: protección de rutas y RLS aplicado cuando existan las tablas.
 
 ## 4. Estados y retroalimentación
 
@@ -127,7 +131,7 @@ el cliente (D-05).
 | -------------- | ------------------------------- | ---------------------------------------------------- |
 | Intro de marca | 10 s de video, cierre a los 2 s | Decidir: alargar el temporizador o recortar el video |
 | «hace 2 min»   | Texto fijo                      | Debe venir de la última sincronización real          |
-| Login          | Sin auth                        | P8b                                                  |
+| Login          | Auth real (18-nov)              | Falta proteger rutas y aplicar RLS                   |
 | Datos          | Ficticios                       | Reemplazo del `DataSource` en P8b                    |
 | Realtime       | No implementado                 | Suscripción a `dashboard_metrics_daily`              |
 | Fee Miru       | «—»                             | Correcto hasta que la BD lo provea                   |

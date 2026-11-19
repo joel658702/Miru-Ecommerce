@@ -75,14 +75,20 @@ E-01. Ningún agente lo reescribe.
 
 ## 9. Estado actual de la WebApp (demo)
 
+Registro de avance por fases: [`ESTADO.md`](ESTADO.md).
+
 - **Despliegue demo**: https://miru-ecommerce-1.vercel.app — solo para revisión de UI. No es
   producción y no se conecta a Supabase.
 - **Rutas** (App Router, pre-renderizadas): `/`, `/pedidos`, `/garantias`, `/productos`,
   `/finanzas`, `/conexiones`, `/login`.
 - **Datos ficticios**: `apps/web/src/data/demo-data-source.ts` detrás de la interfaz
   `DataSource` (`apps/web/src/data/data-source.ts`), que es el punto de intercambio para P8b.
-- **Sin Supabase todavía**: `/login` muestra «Conexión pendiente (P8b)». No hay Auth ni
-  consultas reales.
+- **Auth real contra Supabase local (18-nov-2026)**: `/login` hace `signInWithPassword` y
+  persiste la sesión en cookies (`@supabase/ssr`); `apps/web/proxy.ts` refresca el token en
+  cada navegación y `Header` muestra el operador con opción de salir. Sin
+  `NEXT_PUBLIC_SUPABASE_*` la WebApp sigue en modo demo y `/login` muestra «Conexión pendiente».
+- **Sin datos reales todavía**: no hay tablas (el esquema es un placeholder pendiente del
+  dueño), así que el `DataSource` sigue siendo el de demo. `.env*` se lee desde `apps/web`.
 - **Montos**: se formatean con `formatCOP` de `@miru/shared`. `feeMiruCents` y
   `tasaEntregaEfectiva` son `null` en demo y se muestran como «—»: el fee no se calcula en el
   cliente (D-05).
