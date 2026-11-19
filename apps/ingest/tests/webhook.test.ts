@@ -209,6 +209,21 @@ describe("POST /webhooks/miru/v1/:connectionId", () => {
 
     await app.close();
   });
+
+  it("corta con 429 al superar el límite por IP", async () => {
+    const { app } = harness({ rateLimitMax: 2 });
+
+    for (let i = 0; i < 2; i += 1) {
+      const response = await app.inject(signedRequest(validEvent));
+      expect(response.statusCode).toBe(200);
+    }
+
+    const blocked = await app.inject(signedRequest(validEvent));
+    expect(blocked.statusCode).toBe(429);
+    expect(blocked.json()).toEqual({ error: "rate_limited" });
+
+    await app.close();
+  });
 });
 
 describe("contrato usado por la ingesta", () => {

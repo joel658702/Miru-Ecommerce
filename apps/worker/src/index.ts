@@ -3,6 +3,7 @@ import { Worker } from "bullmq";
 import { Redis } from "ioredis";
 
 import { loadConfig } from "./config.js";
+import { purgeOldEvents } from "./maintenance.js";
 import { refreshDailyMetrics } from "./metrics.js";
 import { createProcessor } from "./processor.js";
 import { createRepository } from "./repository.js";
@@ -90,8 +91,27 @@ void (async () => {
   }
 })();
 
+/**
+ * Mantenimiento: purga los eventos crudos de más de 14 días (plan Free).
+ * Corre al arrancar y cada 24 h; los pedidos no se tocan.
+ */
+async function runPurge(): Promise<void> {
+  try {
+    const deleted = await purgeOldEvents(supabase);
+    if (deleted > 0) {
+      console.log(`[worker] purga: ${deleted} evento(s) antiguos eliminados`);
+    }
+  } catch (error) {
+    console.error(`[worker] purga: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+void runPurge();
+const purgeTimer = setInterval(() => void runPurge(), 24 * 60 * 60 * 1000);
+
 async function shutdown(signal: string): Promise<void> {
   console.log(`[worker] ${signal}: cerrando`);
+  clearInterval(purgeTimer);
   await worker.close();
   connection.disconnect();
   process.exit(0);

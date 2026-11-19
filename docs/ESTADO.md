@@ -38,7 +38,7 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                                                       |
 | Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                                                         |
 | Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                                                  |
-| Pruebas del proyecto               | **102** verdes (43 shared, 12 ingesta, 16 worker, 31 web)                                                       |
+| Pruebas del proyecto               | **110** verdes (43 shared, 17 ingesta, 19 worker, 31 web)                                                       |
 | Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                                                          |
 | Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422**                               |
 | Rotación A/B/C                     | 10 productos → A: 6, B: 2, C: 2 (los inactivos sin ventas)                                                      |
@@ -49,6 +49,9 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Producción verificada              | `https://miru-ecommerce-12.vercel.app`: sin sesión → `/login`; login con Supabase Cloud; **sin badge DEMO**     |
 | VPS operativo                      | `miru-redis` healthy, `/health` OK, worker aplicó un webhook firmado (200) y se limpió el dato de prueba        |
 | Datos demo en producción           | 90 pedidos sobre el tenant `Miru`; se borran con `delete from orders where external_id like 'MRU-%'`            |
+| Mantenimiento automático           | Purga de eventos a 14 días; keep-alive de Supabase, healthcheck y backup en cron del VPS                        |
+| Rate limit de ingesta              | 120 req/min por IP; al exceder responde **429** con `retry-after`                                               |
+| Paquete para plataformas           | `docs/integraciones/PAQUETE_PLATAFORMAS/`: spec, ejemplo, correo y checklist                                    |
 
 ## 2. Fases
 
@@ -74,6 +77,8 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Producción (Vercel)                        | **https://miruecommerce.pro** con TLS; `www` redirige 308; login y datos verificados                 | **Hecho** (19-nov-2026)          | —          |
 | Ingesta + worker en VPS                    | Contabo `86.48.30.152`: redis, ingest y worker corriendo; webhook firmado probado y limpiado         | **Hecho** (19-nov-2026)          | —          |
 | Publicar endpoint de webhooks              | **https://api.miruecommerce.pro** con TLS; webhook firmado → 200 y `duplicate` al repetir            | **Hecho** (19-nov-2026)          | —          |
+| Operación (backups y mantenimiento)        | Purga 14 días en worker, rate limit 120/min, cron de keep-alive, healthcheck y backup en el VPS      | **Hecho** (19-nov-2026)          | —          |
+| Paquete entregable a plataformas           | Spec autocontenida + ejemplo + correo + checklist en `PAQUETE_PLATAFORMAS/`                          | **Hecho** (19-nov-2026)          | —          |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos

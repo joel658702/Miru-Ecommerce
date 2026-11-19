@@ -2,6 +2,8 @@ import Fastify, { type FastifyError, type FastifyInstance } from "fastify";
 import { miruEventV1Schema } from "@miru/shared";
 import { isTimestampFresh, verifySignature } from "@miru/shared/hmac";
 
+import { createRateLimiter } from "./rate-limit.js";
+
 /**
  * Cabeceras del transporte Miru v1 (documentadas en
  * docs/integraciones/MIRU_V1_TRANSPORTE.md). No son cabeceras de Dropi,
@@ -27,6 +29,8 @@ export interface WebhookDeps {
   logger?: boolean;
   /** Reloj inyectable para probar la ventana de ±5 min. */
   now?: () => number;
+  /** Máximo de peticiones por minuto e IP (las pruebas usan valores bajos). */
+  rateLimitMax?: number;
   findConnection: (connectionId: string) => Promise<{ id: string; tenantId: string } | null>;
   /**
    * Persiste el evento crudo ANTES de procesar (D-07). Devuelve `duplicate`
@@ -38,6 +42,9 @@ export interface WebhookDeps {
 }
 
 const MAX_BODY_BYTES = 1024 * 1024; // 1 MiB
+
+/** Límite por defecto: 120 peticiones por minuto e IP. */
+const DEFAULT_RATE_LIMIT_MAX = 120;
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -57,6 +64,20 @@ function headerValue(value: string | string[] | undefined): string | null {
  */
 export function buildServer(deps: WebhookDeps): FastifyInstance {
   const app = Fastify({ logger: deps.logger ?? false, bodyLimit: MAX_BODY_BYTES });
+
+  // Límite por IP: protege la ingesta de picos o abuso sin tocar el ACK.
+  const limiter = createRateLimiter(deps.rateLimitMax ?? DEFAULT_RATE_LIMIT_MAX, 60_000);
+
+  app.addHook("onRequest", async (request, reply) => {
+    const result = limiter.check(request.ip);
+
+    if (!result.allowed) {
+      void reply
+        .header("retry-after", String(Math.ceil(result.retryAfterMs / 1000)))
+        .code(429)
+        .send({ error: "rate_limited" });
+    }
+  });
 
   // Guardamos el body CRUDO: la firma se verifica sobre los bytes exactos que
   // envió la plataforma, antes de deserializar (D-07).

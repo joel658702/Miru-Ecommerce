@@ -229,14 +229,15 @@ Debe responder `200 accepted`, aparecer la fila en `webhook_events` y el pedido 
 
 - **Secretos:** solo en variables de entorno; rotar el HMAC por canal cada 90 días o ante
   cualquier sospecha. `service_role` nunca se comparte con la plataforma de origen.
-- **Backups:** plan gratuito de Supabase no incluye backups; programar `pg_dump` cifrado (VPS o
-  cron externo) antes de tener datos reales.
-- **Purga de eventos:** `webhook_events` debe limpiarse a 14 días (plan gratuito) — pendiente de
-  implementar como tarea del worker.
-- **Rate limiting** en el endpoint de webhooks (pendiente; el ACK es rápido pero conviene limitar
-  por IP/conexión).
-- **Observabilidad:** logs de ingesta/worker y alertas de cola; sin esto no se detectan webhooks
-  rechazados.
+- **Backups:** `deploy/backup.sh` hace `pg_dump` diario a `/opt/miru/backups` con retención de 7
+  días. Requiere `DATABASE_URL` en `/opt/miru/deploy/.env.backup` (Supabase → Settings → Database).
+- **Purga de eventos:** el worker borra `webhook_events` con más de **14 días** al arrancar y cada
+  24 h (`apps/worker/src/maintenance.ts`).
+- **Rate limiting:** 120 peticiones/minuto por IP en la ingesta; responde `429` con `retry-after`.
+- **Mantenimiento del VPS:** `deploy/cron.txt` programa keep-alive de Supabase (`keepalive.sh`),
+  healthcheck del panel y la API (`healthcheck.sh`) y el backup. Instalación y logs en ese archivo.
+- **Observabilidad:** logs de ingesta/worker y del healthcheck; para alertas reales conectar
+  UptimeRobot/Better Stack al endpoint `/health` o al log.
 - **Correo:** Supabase Cloud usa su SMTP limitado; configurar SMTP propio antes de invitar
   operadores a producción.
 
