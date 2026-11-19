@@ -15,6 +15,16 @@ export default tseslint.config(
     files: ["**/*.{js,mjs,cjs}"],
     ...js.configs.recommended,
   },
+  {
+    // Scripts de Node (no corren en el navegador).
+    files: ["scripts/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        process: "readonly",
+      },
+    },
+  },
   ...tseslint.configs.recommended,
   {
     rules: {

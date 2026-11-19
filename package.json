@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "webhook:sign": "node scripts/firmar-webhook.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
