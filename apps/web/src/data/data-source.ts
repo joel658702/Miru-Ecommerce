@@ -64,7 +64,13 @@ export interface ProductRecord {
   stock: number;
   plataformas: Plataforma[];
   activo: boolean;
+  /** Clasificación ABC por unidades vendidas en los últimos 30 días. */
+  rotacion?: RotationClass;
+  unidadesVendidas?: number;
 }
+
+/** Rotación de inventario: A = alto movimiento, C = cola. */
+export type RotationClass = "A" | "B" | "C";
 
 export interface ChartDayRecord {
   dia: string;

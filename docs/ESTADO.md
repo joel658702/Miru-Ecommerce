@@ -38,9 +38,10 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                         |
 | Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                           |
 | Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                    |
-| Pruebas del proyecto               | **87** verdes (43 shared, 12 ingesta, 16 worker, 16 web)                          |
+| Pruebas del proyecto               | **92** verdes (43 shared, 12 ingesta, 16 worker, 21 web)                          |
 | Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                            |
 | Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422** |
+| Rotación A/B/C                     | 10 productos → A: 6, B: 2, C: 2 (los inactivos sin ventas)                        |
 
 ## 2. Fases
 
@@ -59,7 +60,7 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo             | **Hecho** (19-nov-2026)          | Esquema    |
 | Realtime + métricas (`P8b`, 3/3)           | Worker llena `dashboard_metrics_daily`; el dashboard se suscribe y pausa con la pestaña oculta       | **Hecho** (19-nov-2026)          | DataSource |
 | Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                              | **Hecho** (19-nov-2026)          | Auth       |
-| Features (`P9`)                            | Período en Finanzas y cambio de estado de garantías (hechos); rotación A/B/C (pendiente)             | **Parcial** (19-nov-2026)        | DataSource |
+| Features (`P9`)                            | Período en Finanzas, cambio de estado de garantías y rotación A/B/C                                  | **Hecho** (19-nov-2026)          | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos

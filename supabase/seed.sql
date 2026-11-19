@@ -47,7 +47,10 @@ values
   ('44444444-4444-4444-4444-444444444444', 'MASAJ-EL-05', 'Masajeador Eléctrico Portátil', 9999000, 6000000, 90, array['MasterShop'], true),
   ('44444444-4444-4444-4444-444444444444', 'VENT-USB-06', 'Ventilador USB de Escritorio', 3999000, 2300000, 200, array['Dropi'], true),
   ('44444444-4444-4444-4444-444444444444', 'TERMO-AC-07', 'Termo de Acero 1 L', 5999000, 3500000, 140, array['Effi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'ORGAN-PL-08', 'Organizador Plástico Apilable', 4499000, 2600000, 110, array['Dropi','MasterShop','Effi'], true)
+  ('44444444-4444-4444-4444-444444444444', 'ORGAN-PL-08', 'Organizador Plástico Apilable', 4499000, 2600000, 110, array['Dropi','MasterShop','Effi'], true),
+  -- Inactivos: sirven para ver la rotación C (sin ventas en el período).
+  ('44444444-4444-4444-4444-444444444444', 'FUNDA-TB-09', 'Funda Tablet Universal', 3499000, 2000000, 25, array['Effi'], false),
+  ('44444444-4444-4444-4444-444444444444', 'CABLE-US-10', 'Cable USB-C 2 m', 1999000, 900000, 40, array['Dropi'], false)
 on conflict (tenant_id, sku) do update
   set nombre = excluded.nombre,
       precio_venta_cents = excluded.precio_venta_cents,
@@ -155,6 +158,7 @@ with primario as (
     select *
     from public.products p2
     where p2.tenant_id = o.tenant_id
+      and p2.activo = true
     order by md5(o.external_id || p2.sku)
     limit 1
   ) p on true
@@ -176,6 +180,7 @@ with secundario as (
     select *
     from public.products p2
     where p2.tenant_id = o.tenant_id
+      and p2.activo = true
       and p2.sku <> (
         select i.sku from public.order_items i where i.order_id = o.id order by i.sku limit 1
       )

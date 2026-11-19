@@ -62,7 +62,9 @@ el cliente (D-05).
 ### 3.4 Productos `/productos`
 
 - Listado con SKU, precio de venta, costo unitario, stock y plataformas (`StatusChip`).
-- **P9**: clasificación A/B/C (rotación) se agrega cuando exista el job de analítica.
+- **Rotación A/B/C implementada (P9)**: análisis ABC por unidades de los últimos 30 días
+  (pedidos no cancelados). A = grupo que acumula el 80 % de las unidades, B = hasta el 95 %,
+  C = cola. Los productos sin ventas quedan en C. Se muestra la clase y las unidades vendidas.
 
 ### 3.5 Finanzas `/finanzas`
 

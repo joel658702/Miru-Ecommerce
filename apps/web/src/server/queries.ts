@@ -12,6 +12,8 @@ import type {
 } from "@/src/data/data-source";
 import { computeChart, computeFinance, computeShare, computeTotals } from "./aggregate";
 import type { OrderFacts } from "./aggregate";
+import { periodStartIso } from "./period";
+import { classifyRotation } from "./rotation";
 
 export interface DataContext {
   /** Cliente con la sesión del operador: todo pasa por RLS. */
@@ -236,16 +238,54 @@ export async function loadProducts(ctx: DataContext): Promise<ProductRecord[]> {
     activo: boolean;
   };
 
-  return ((data ?? []) as unknown as ProductRow[]).map((row) => ({
-    id: row.id,
-    sku: row.sku,
-    nombre: row.nombre,
-    precioVentaCents: row.precio_venta_cents,
-    costoUnitarioCents: row.costo_unitario_cents,
-    stock: row.stock,
-    plataformas: row.plataformas ?? [],
-    activo: row.activo,
-  }));
+  const products = (data ?? []) as unknown as ProductRow[];
+  const unitsBySku = await fetchUnitsSold(ctx);
+
+  // Solo se clasifican SKUs del catálogo: los ítems de demo ajenos al catálogo
+  // no deben alterar los cortes 80/95.
+  const rotation = classifyRotation(
+    products.map((row) => ({ sku: row.sku, units: unitsBySku.get(row.sku) ?? 0 })),
+  );
+
+  return products.map((row) => {
+    const unidadesVendidas = unitsBySku.get(row.sku) ?? 0;
+
+    return {
+      id: row.id,
+      sku: row.sku,
+      nombre: row.nombre,
+      precioVentaCents: row.precio_venta_cents,
+      costoUnitarioCents: row.costo_unitario_cents,
+      stock: row.stock,
+      plataformas: row.plataformas ?? [],
+      activo: row.activo,
+      unidadesVendidas,
+      rotacion: rotation.get(row.sku) ?? "C",
+    };
+  });
+}
+
+/** Unidades vendidas por SKU en los últimos 30 días (pedidos no cancelados). */
+async function fetchUnitsSold(ctx: DataContext): Promise<Map<string, number>> {
+  const sinceIso = periodStartIso("mes");
+
+  const { data, error } = await ctx.client
+    .from("order_items")
+    .select("sku, qty, orders!inner(estado, external_created_at)")
+    .gte("orders.external_created_at", sinceIso)
+    .neq("orders.estado", "cancelado");
+
+  if (error !== null) {
+    throw error;
+  }
+
+  const units = new Map<string, number>();
+
+  for (const row of (data ?? []) as { sku: string; qty: number }[]) {
+    units.set(row.sku, (units.get(row.sku) ?? 0) + row.qty);
+  }
+
+  return units;
 }
 
 const WARRANTY_SELECT = [

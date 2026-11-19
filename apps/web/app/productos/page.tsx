@@ -8,7 +8,13 @@ import { DataTable, type Column } from "@/components/ui/DataTable";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { dataSource } from "@/src/data";
-import type { DataSourceState, ProductRecord } from "@/src/data/data-source";
+import type { DataSourceState, ProductRecord, RotationClass } from "@/src/data/data-source";
+
+const ROTATION_STYLES: Record<RotationClass, string> = {
+  A: "bg-[var(--color-success-bg)] text-[var(--color-success-text)] border-[var(--color-success-border)]",
+  B: "bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] border-[var(--color-warning-border)]",
+  C: "bg-[var(--color-neutral-100)] text-[var(--color-neutral-600)] border-[var(--color-border-subtle)]",
+};
 
 function ProductosContent() {
   const searchParams = useSearchParams();
@@ -56,9 +62,7 @@ function ProductosContent() {
       key: "sku",
       header: "SKU",
       render: (p) => (
-        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">
-          {p.sku}
-        </span>
+        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">{p.sku}</span>
       ),
     },
     {
@@ -92,6 +96,35 @@ function ProductosContent() {
       ),
     },
     {
+      key: "rotacion",
+      header: "Rotación 30 d",
+      render: (p) => (
+        <span
+          className={`inline-flex h-6 min-w-6 items-center justify-center rounded-md border px-1.5 text-xs font-bold ${
+            p.rotacion
+              ? ROTATION_STYLES[p.rotacion]
+              : "border-[var(--color-border-subtle)] bg-[var(--color-neutral-100)] text-[var(--color-neutral-500)]"
+          }`}
+          title={
+            p.rotacion
+              ? `Rotación ${p.rotacion}: ${p.unidadesVendidas ?? 0} unidades en 30 días`
+              : "Sin clasificación"
+          }
+        >
+          {p.rotacion ?? "—"}
+        </span>
+      ),
+    },
+    {
+      key: "unidadesVendidas",
+      header: "Unidades 30 d",
+      render: (p) => (
+        <span className="font-mono text-xs font-semibold tabular-nums text-[var(--color-neutral-800)]">
+          {p.unidadesVendidas ?? 0}
+        </span>
+      ),
+    },
+    {
       key: "costo",
       header: "Costo Unitario COP",
       render: (p) => (
@@ -121,6 +154,10 @@ function ProductosContent() {
           <p className="text-xs text-[var(--color-neutral-500)]">
             {filteredProducts.length} referencias sincronizadas con bodegas aliadas
           </p>
+          <p className="text-[11px] text-[var(--color-neutral-500)]">
+            Rotación A/B/C por unidades de los últimos 30 días: A = 80 % de las ventas, B = 15 %, C
+            = cola.
+          </p>
         </div>
       </div>
 
@@ -136,7 +173,9 @@ function ProductosContent() {
         columns={columns}
         rows={filteredProducts}
         keyExtractor={(p) => p.id}
-        state={loading ? "loading" : error ? "error" : filteredProducts.length === 0 ? "empty" : "data"}
+        state={
+          loading ? "loading" : error ? "error" : filteredProducts.length === 0 ? "empty" : "data"
+        }
         onRetry={() => loadProducts("data")}
         emptyTitle="Sin productos"
         emptyDescription="No se encontraron referencias que coincidan con la búsqueda."
@@ -150,7 +189,11 @@ function ProductosContent() {
 export default function ProductosPage() {
   return (
     <AppShell title="Productos">
-      <Suspense fallback={<div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />
+        }
+      >
         <ProductosContent />
       </Suspense>
     </AppShell>
