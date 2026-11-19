@@ -109,9 +109,14 @@ Secuencia siguiente (una fase por sesión):
   `miru-webhooks` con **concurrencia 1** para que la regla de orden (D-07) no dependa de carreras,
   y tras cada evento recalcula la fila del día en `dashboard_metrics_daily` (señal de Realtime).
   Al arrancar deja las métricas del día listas.
-- **Datos de prueba locales** (base de desarrollo, no se commitean): tenant `Tienda Prueba`,
-  conexión Dropi activa, 6 pedidos (1 entregado, 1 devuelto, 4 pendientes) y 10 eventos procesados.
-  Sirven para validar la WebApp mientras no haya tráfico real.
+- **Datos de demostración** (`supabase/seed.sql`): 90 pedidos repartidos en 30 días (64 entregados,
+  9 en tránsito, 7 devueltos, 5 pendientes, 3 novedad, 2 cancelados), 8 productos, 6 garantías y 30
+  filas de métricas diarias. El fee no se escribe: lo generan las columnas/triggers de la BD. Es
+  idempotente (borra y recrea los pedidos `MRU-%`) y `supabase db reset` lo aplica solo. Para
+  quitarlo: `delete from public.orders where external_id like 'MRU-%';`.
+- **Los datos reales no vienen de este seed**: entran por la ingesta (`apps/ingest`) desde la
+  plataforma de origen, con el transporte documentado en
+  [`integraciones/MIRU_V1_TRANSPORTE.md`](integraciones/MIRU_V1_TRANSPORTE.md).
 - **CLI de Supabase**: el shim `C:\Users\joe\AppData\Roaming\npm\supabase.ps1` **se cuelga** al
   invocarlo (`supabase --version` no responde). Mientras se actualice el CLI (hay v3.x
   disponible), se usa el binario directo:

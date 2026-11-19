@@ -131,9 +131,7 @@ function DashboardContent() {
         <KpiCard
           label="Ventas brutas"
           value={formatCOP(data.ventasBrutasCents)}
-          delta="+12,4 %"
-          deltaTone="positive"
-          helperText="vs. semana anterior"
+          helperText="Todos los pedidos no cancelados"
           accent="cyan"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,9 +167,7 @@ function DashboardContent() {
         <KpiCard
           label="Costo de fletes"
           value={formatCOP(data.costoFletesCents)}
-          delta="-2,1 %"
-          deltaTone="positive"
-          helperText="Optimización de rutas"
+          helperText="Los paga el dropshipper"
           accent="default"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,9 +185,7 @@ function DashboardContent() {
         <KpiCard
           label="Utilidad neta"
           value={formatCOP(data.utilidadNetaCents)}
-          delta="+8,7 %"
-          deltaTone="positive"
-          helperText="Consolidado multicanal"
+          helperText="5 % de entregados − devueltos"
           accent="emerald"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -227,7 +221,7 @@ function DashboardContent() {
         <KpiCard
           label="Entregados"
           value={data.entregados.toString()}
-          delta="83,1 %"
+          delta={data.tasaEntregaEfectiva !== null ? `${data.tasaEntregaEfectiva} %` : undefined}
           deltaTone="positive"
           helperText="Efectividad en destino"
           accent="emerald"
@@ -247,7 +241,11 @@ function DashboardContent() {
         <KpiCard
           label="Devueltos"
           value={data.devueltos.toString()}
-          delta="6,3 %"
+          delta={
+            data.entregados + data.devueltos > 0
+              ? `${Math.round((data.devueltos / (data.entregados + data.devueltos)) * 100)} %`
+              : undefined
+          }
           deltaTone="negative"
           helperText="Tasa de devolución"
           accent="amber"

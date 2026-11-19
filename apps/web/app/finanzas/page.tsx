@@ -92,9 +92,7 @@ function FinanzasContent() {
         <KpiCard
           label="Ventas brutas"
           value={formatCOP(finance.ventasBrutasCents)}
-          delta="+12,4 %"
-          deltaTone="positive"
-          helperText="Ingreso bruto consolidado"
+          helperText="Todos los pedidos no cancelados"
           accent="cyan"
         />
 
@@ -108,18 +106,14 @@ function FinanzasContent() {
         <KpiCard
           label="Costo de fletes"
           value={formatCOP(finance.costoFletesCents)}
-          delta="-2,1 %"
-          deltaTone="positive"
-          helperText="Descuento logístico"
+          helperText="Los paga el dropshipper"
           accent="default"
         />
 
         <KpiCard
           label="Utilidad neta"
           value={formatCOP(finance.utilidadNetaCents)}
-          delta="+8,7 %"
-          deltaTone="positive"
-          helperText="Resultado operativo consolidado"
+          helperText="5 % de entregados − devueltos"
           accent="emerald"
         />
       </div>
@@ -139,16 +133,29 @@ function FinanzasContent() {
           <table className="w-full text-left border-collapse text-sm">
             <thead className="border-b border-[var(--color-border-subtle)] bg-[var(--color-surface-canvas)] text-xs font-semibold uppercase text-[var(--color-neutral-500)]">
               <tr>
-                <th scope="col" className="px-4 py-3">Canal</th>
-                <th scope="col" className="px-4 py-3">Pedidos</th>
-                <th scope="col" className="px-4 py-3">Ventas Brutas</th>
-                <th scope="col" className="px-4 py-3">Fletes</th>
-                <th scope="col" className="px-4 py-3">Fee Miru (5%)</th>
+                <th scope="col" className="px-4 py-3">
+                  Canal
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Pedidos
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Ventas Brutas
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Fletes
+                </th>
+                <th scope="col" className="px-4 py-3">
+                  Fee Miru (5%)
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border-subtle)]">
               {finance.desglosePlataforma.map((item) => (
-                <tr key={item.plataforma} className="h-12 hover:bg-[var(--color-surface-canvas)] transition-colors">
+                <tr
+                  key={item.plataforma}
+                  className="h-12 hover:bg-[var(--color-surface-canvas)] transition-colors"
+                >
                   <td className="px-4 py-2.5">
                     <StatusChip domain="plataforma" status={item.plataforma} size="sm" />
                   </td>
@@ -171,10 +178,13 @@ function FinanzasContent() {
         </div>
 
         <div className="rounded-lg bg-[var(--color-surface-canvas)] p-3 border border-[var(--color-border-subtle)] text-xs text-[var(--color-neutral-600)]">
-          <p className="font-semibold text-[var(--color-neutral-900)]">Regla financiera bloqueada (D-04 y D-05):</p>
+          <p className="font-semibold text-[var(--color-neutral-900)]">
+            Regla financiera bloqueada (D-04 y D-05):
+          </p>
           <p className="mt-0.5">
             Los montos se almacenan estrictamente como enteros en centavos (BIGINT en PostgreSQL).
-            El fee de Miru se calcula por trigger a nivel de fila en la base de datos y nunca en la aplicación web.
+            El fee de Miru se calcula por trigger a nivel de fila en la base de datos y nunca en la
+            aplicación web.
           </p>
         </div>
       </section>
@@ -185,7 +195,11 @@ function FinanzasContent() {
 export default function FinanzasPage() {
   return (
     <AppShell title="Finanzas">
-      <Suspense fallback={<div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />
+        }
+      >
         <FinanzasContent />
       </Suspense>
     </AppShell>
