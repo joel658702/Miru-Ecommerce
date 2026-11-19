@@ -9,49 +9,50 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 
 ## 1. Verificación ejecutada en esta fecha
 
-| Comprobación                       | Resultado                                                                                                       |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `pnpm install --frozen-lockfile`   | OK                                                                                                              |
-| `pnpm typecheck`                   | OK (4 proyectos)                                                                                                |
-| `pnpm lint`                        | OK                                                                                                              |
-| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                                                                           |
-| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                                                              |
-| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)                                                        |
-| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                                                                  |
-| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400                                                |
-| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina                                                   |
-| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado                                              |
-| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000                                                      |
-| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)                                                        |
-| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado                                                      |
-| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                                                              |
-| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)                                               |
-| Ingesta: duplicado                 | `200 duplicate`                                                                                                 |
-| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión                                                  |
-| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis                                                    |
-| Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía                                                         |
-| Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000)                                             |
-| Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica                                                          |
-| Datos reales en la UI              | `/pedidos` 6 órdenes, `/conexiones` Dropi (10 eventos hoy)                                                      |
-| KPIs con regla del dueño           | ventas de todos los no cancelados; utilidad 85.005; fletes 0                                                    |
-| API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                                                                |
-| Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                                                       |
-| Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                                                         |
-| Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                                                  |
-| Pruebas del proyecto               | **110** verdes (43 shared, 17 ingesta, 19 worker, 31 web)                                                       |
-| Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                                                          |
-| Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422**                               |
-| Rotación A/B/C                     | 10 productos → A: 6, B: 2, C: 2 (los inactivos sin ventas)                                                      |
-| Alta de operadores                 | Owner crea (201); el operador ve los datos; crear sin ser owner → **403**; revocar → **204**                    |
-| Exportar CSV                       | Pedidos 96 filas + cabecera; finanzas con fila TOTAL; sin sesión → **401**                                      |
-| Paquete de integración             | Contrato + payload de ejemplo (567 B) + vector HMAC + `pnpm webhook:sign`                                       |
-| Cabeceras y robots                 | `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; `robots.txt` bloquea todo |
-| Producción verificada              | `https://miru-ecommerce-12.vercel.app`: sin sesión → `/login`; login con Supabase Cloud; **sin badge DEMO**     |
-| VPS operativo                      | `miru-redis` healthy, `/health` OK, worker aplicó un webhook firmado (200) y se limpió el dato de prueba        |
-| Datos demo en producción           | 90 pedidos sobre el tenant `Miru`; se borran con `delete from orders where external_id like 'MRU-%'`            |
-| Mantenimiento automático           | Purga de eventos a 14 días; keep-alive de Supabase, healthcheck y backup en cron del VPS                        |
-| Rate limit de ingesta              | 120 req/min por IP; al exceder responde **429** con `retry-after`                                               |
-| Paquete para plataformas           | `docs/integraciones/PAQUETE_PLATAFORMAS/`: spec, ejemplo, correo y checklist                                    |
+| Comprobación                       | Resultado                                                                                                        |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`   | OK                                                                                                               |
+| `pnpm typecheck`                   | OK (4 proyectos)                                                                                                 |
+| `pnpm lint`                        | OK                                                                                                               |
+| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                                                                            |
+| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                                                               |
+| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)                                                         |
+| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                                                                   |
+| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400                                                 |
+| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina                                                    |
+| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado                                               |
+| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000                                                       |
+| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)                                                         |
+| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado                                                       |
+| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                                                               |
+| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)                                                |
+| Ingesta: duplicado                 | `200 duplicate`                                                                                                  |
+| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión                                                   |
+| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis                                                     |
+| Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía                                                          |
+| Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000)                                              |
+| Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica                                                           |
+| Datos reales en la UI              | `/pedidos` 6 órdenes, `/conexiones` Dropi (10 eventos hoy)                                                       |
+| KPIs con regla del dueño           | ventas de todos los no cancelados; utilidad 85.005; fletes 0                                                     |
+| API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                                                                 |
+| Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                                                        |
+| Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                                                          |
+| Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                                                   |
+| Pruebas del proyecto               | **110** verdes (43 shared, 17 ingesta, 19 worker, 31 web)                                                        |
+| Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                                                           |
+| Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422**                                |
+| Rotación A/B/C                     | 10 productos → A: 6, B: 2, C: 2 (los inactivos sin ventas)                                                       |
+| Alta de operadores                 | Owner crea (201); el operador ve los datos; crear sin ser owner → **403**; revocar → **204**                     |
+| Exportar CSV                       | Pedidos 96 filas + cabecera; finanzas con fila TOTAL; sin sesión → **401**                                       |
+| Paquete de integración             | Contrato + payload de ejemplo (567 B) + vector HMAC + `pnpm webhook:sign`                                        |
+| Cabeceras y robots                 | `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; `robots.txt` bloquea todo  |
+| Producción verificada              | `https://miru-ecommerce-12.vercel.app`: sin sesión → `/login`; login con Supabase Cloud; **sin badge DEMO**      |
+| VPS operativo                      | `miru-redis` healthy, `/health` OK, worker aplicó un webhook firmado (200) y se limpió el dato de prueba         |
+| Datos demo en producción           | 90 pedidos sobre el tenant `Miru`; se borran con `delete from orders where external_id like 'MRU-%'`             |
+| Mantenimiento automático           | Purga de eventos a 14 días; keep-alive de Supabase, healthcheck y backup en cron del VPS                         |
+| Rate limit de ingesta              | 120 req/min por IP; al exceder responde **429** con `retry-after`                                                |
+| Fichas por plataforma              | `docs/integraciones/plataformas/`: ficha técnica y de seguridad + qué ofrecemos y necesitamos de cada plataforma |
+| Paquete para plataformas           | `docs/integraciones/PAQUETE_PLATAFORMAS/`: spec, ejemplo, correo y checklist                                     |
 
 ## 2. Fases
 
