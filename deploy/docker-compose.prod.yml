@@ -55,6 +55,9 @@ services:
     image: caddy:2-alpine
     container_name: miru-caddy
     restart: unless-stopped
+    # Solo para un VPS "limpio". Si el servidor ya tiene Traefik/Coolify en
+    # 80/443, NO activar este perfil: se publica con el proxy existente.
+    profiles: ["caddy"]
     ports:
       - "80:80"
       - "443:443"

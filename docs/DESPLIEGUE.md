@@ -14,13 +14,18 @@ plataformas de origen exigen para aprobar la integración.
 | Auth                 | Site URL y redirects apuntando al dominio de Vercel                                      |
 | Tenant inicial       | `Miru` con el owner `joe.miranda02z@gmail.com`                                           |
 | Variables en Vercel  | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Datos                | **Vacíos** (producción limpia; el seed demo no se cargó)                                 |
+| Datos                | 90 pedidos demo cargados sobre `Miru` (se borran antes de la integración)                |
+| VPS Contabo          | `86.48.30.152` — `miru-redis`, `miru-ingest` y `miru-worker` corriendo (Docker)          |
+| Endpoint de webhooks | Solo interno: `http://127.0.0.1:3001` — falta publicarlo con el dominio                  |
 
 Verificado en producción: `/` sin sesión → `/login` (307), login con Supabase Cloud, correo en el
 header, **sin badge DEMO**, `/operadores` operativo.
 
-Pendiente para la integración: **host público de ingesta + worker + Redis** (Vercel no ejecuta
-procesos de larga vida) y **dominio propio** si se quiere dejar de usar `*.vercel.app`.
+Verificado en el VPS: `/health` responde `{"ok":true}`, el worker escucha la cola y un webhook
+firmado de prueba respondió `200 accepted` y se aplicó como pedido (datos de prueba eliminados).
+
+Pendiente para la integración: **publicar el endpoint** (dominio `api.<dominio>` + proxy),
+**secreto HMAC por canal** y limpiar los datos demo.
 
 ## 0. Antes de empezar: una decisión que hay que registrar
 
@@ -125,6 +130,22 @@ entrega a las plataformas junto con el secreto HMAC ([`integraciones/MIRU_V1_TRA
 
 Vercel solo aloja la WebApp. La ingesta, el worker y Redis van en el VPS con Docker
 (`deploy/docker-compose.prod.yml`).
+
+### Estado actual (19-nov-2026)
+
+| Pieza           | Valor                                                                       |
+| --------------- | --------------------------------------------------------------------------- |
+| Servidor        | Contabo `86.48.30.152` (Ubuntu 24.04, 4 vCPU, 8 GB, Docker 29)              |
+| Repo desplegado | `/opt/miru` (clon de GitHub + `deploy/` copiado por `scp`)                  |
+| Contenedores    | `miru-redis` (healthy), `miru-ingest`, `miru-worker`                        |
+| Variables       | `/opt/miru/deploy/.env.prod` (600) con service_role y HMAC propio           |
+| Proxy           | **No se usó Caddy**: el servidor ya corre **Coolify + Traefik** en 80/443   |
+| Endpoint        | interno `http://127.0.0.1:3001`; falta publicarlo con el dominio            |
+| Smoke test      | webhook firmado → `200 accepted` → worker aplicó el pedido → datos borrados |
+
+> **Importante:** en este VPS el perfil `caddy` del compose está desactivado
+> (`profiles: ["caddy"]`). Cuando exista el dominio, se publica con el proxy de Coolify/Traefik
+> (o un Caddy en puertos alternos detrás de Traefik). El puerto 3001 **nunca** se abre al público.
 
 ### 6.1 Requisitos
 

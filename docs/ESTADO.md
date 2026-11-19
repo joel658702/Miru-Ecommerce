@@ -47,30 +47,34 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Paquete de integración             | Contrato + payload de ejemplo (567 B) + vector HMAC + `pnpm webhook:sign`                                       |
 | Cabeceras y robots                 | `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; `robots.txt` bloquea todo |
 | Producción verificada              | `https://miru-ecommerce-12.vercel.app`: sin sesión → `/login`; login con Supabase Cloud; **sin badge DEMO**     |
+| VPS operativo                      | `miru-redis` healthy, `/health` OK, worker aplicó un webhook firmado (200) y se limpió el dato de prueba        |
+| Datos demo en producción           | 90 pedidos sobre el tenant `Miru`; se borran con `delete from orders where external_id like 'MRU-%'`            |
 
 ## 2. Fases
 
 Los identificadores `P3`, `P8a`, `P8b` y `P9` son los que ya usa el repositorio. El resto se
 nombra por frente para no inventar una numeración que el dueño no ha fijado.
 
-| Frente                                     | Alcance                                                                                                                       | Estado                           | Depende de |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ---------- |
-| Contrato canónico (`P3`)                   | Zod del evento `order.upserted`, dinero en centavos, HMAC-SHA256, ventana ±300 s                                              | **Hecho**                        | —          |
-| Shell demo (`P8a`)                         | 7 rutas, datos ficticios tras `DataSource`, sistema de diseño                                                                 | **Hecho**                        | —          |
-| Toolchain y CI                             | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, GitHub Actions                                                           | **Hecho**                        | —          |
-| Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token                          | **Hecho** (18-nov-2026)          | —          |
-| Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                                          | **Hecho** (aprobado 18-nov-2026) | —          |
-| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms                            | **Hecho** (19-nov-2026)          | Esquema    |
-| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                                                        | **Hecho** (19-nov-2026)          | Ingesta    |
-| DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo                                      | **Hecho** (19-nov-2026)          | Esquema    |
-| Realtime + métricas (`P8b`, 3/3)           | Worker llena `dashboard_metrics_daily`; el dashboard se suscribe y pausa con la pestaña oculta                                | **Hecho** (19-nov-2026)          | DataSource |
-| Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                                                       | **Hecho** (19-nov-2026)          | Auth       |
-| Features (`P9`)                            | Período en Finanzas, cambio de estado de garantías y rotación A/B/C                                                           | **Hecho** (19-nov-2026)          | DataSource |
-| Alta de operadores                         | `/operadores`: owner crea cuentas (Auth + membresía) y revoca accesos; la lista la ve el tenant                               | **Hecho** (19-nov-2026)          | Auth       |
-| Exportar CSV                               | Pedidos y finanzas (según período) con sesión y RLS; UTF-8 con BOM y separador `;`                                            | **Hecho** (19-nov-2026)          | DataSource |
-| Paquete para plataformas                   | Contrato, payload de ejemplo, vector de firma y script `webhook:sign`                                                         | **Preparado** (19-nov-2026)      | —          |
-| Producción (Vercel)                        | **https://miru-ecommerce-12.vercel.app** con Supabase Cloud (`zgvfaqhahutkarbbwagi`); faltan dominio propio y host de ingesta | **Hecho** (19-nov-2026)          | —          |
-| Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                                          | **Diferido por el dueño**        | —          |
+| Frente                                     | Alcance                                                                                              | Estado                           | Depende de |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------------------------------- | ---------- |
+| Contrato canónico (`P3`)                   | Zod del evento `order.upserted`, dinero en centavos, HMAC-SHA256, ventana ±300 s                     | **Hecho**                        | —          |
+| Shell demo (`P8a`)                         | 7 rutas, datos ficticios tras `DataSource`, sistema de diseño                                        | **Hecho**                        | —          |
+| Toolchain y CI                             | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, GitHub Actions                                  | **Hecho**                        | —          |
+| Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token | **Hecho** (18-nov-2026)          | —          |
+| Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Hecho** (aprobado 18-nov-2026) | —          |
+| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | **Hecho** (19-nov-2026)          | Esquema    |
+| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | **Hecho** (19-nov-2026)          | Ingesta    |
+| DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo             | **Hecho** (19-nov-2026)          | Esquema    |
+| Realtime + métricas (`P8b`, 3/3)           | Worker llena `dashboard_metrics_daily`; el dashboard se suscribe y pausa con la pestaña oculta       | **Hecho** (19-nov-2026)          | DataSource |
+| Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                              | **Hecho** (19-nov-2026)          | Auth       |
+| Features (`P9`)                            | Período en Finanzas, cambio de estado de garantías y rotación A/B/C                                  | **Hecho** (19-nov-2026)          | DataSource |
+| Alta de operadores                         | `/operadores`: owner crea cuentas (Auth + membresía) y revoca accesos; la lista la ve el tenant      | **Hecho** (19-nov-2026)          | Auth       |
+| Exportar CSV                               | Pedidos y finanzas (según período) con sesión y RLS; UTF-8 con BOM y separador `;`                   | **Hecho** (19-nov-2026)          | DataSource |
+| Paquete para plataformas                   | Contrato, payload de ejemplo, vector de firma y script `webhook:sign`                                | **Preparado** (19-nov-2026)      | —          |
+| Producción (Vercel)                        | **https://miru-ecommerce-12.vercel.app** con Supabase Cloud (`zgvfaqhahutkarbbwagi`); demo cargado   | **Hecho** (19-nov-2026)          | —          |
+| Ingesta + worker en VPS                    | Contabo `86.48.30.152`: redis, ingest y worker corriendo; webhook firmado probado y limpiado         | **Hecho** (19-nov-2026)          | —          |
+| Publicar endpoint de webhooks              | Falta `api.<dominio>` en Hostinger + ruta en el proxy (Coolify/Traefik); hoy es solo interno         | **Pendiente del dominio**        | —          |
+| Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos
 
