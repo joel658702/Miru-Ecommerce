@@ -419,7 +419,11 @@ export async function loadConnections(ctx: DataContext): Promise<ConnectionRecor
   const rows = (data ?? []) as unknown as ConnectionRow[];
   const eventosHoy = await countEventsToday(ctx);
 
-  const baseUrl = process.env.NEXT_PUBLIC_INGEST_URL ?? "http://127.0.0.1:3001";
+  const baseUrl = process.env.NEXT_PUBLIC_INGEST_URL ?? "";
+  const webhookUrl = (connectionId: string) =>
+    baseUrl === ""
+      ? `/webhooks/miru/v1/${connectionId}`
+      : `${baseUrl.replace(/\/$/, "")}/webhooks/miru/v1/${connectionId}`;
 
   return rows.map((row) => ({
     id: row.id,
@@ -427,7 +431,7 @@ export async function loadConnections(ctx: DataContext): Promise<ConnectionRecor
     estado: row.estado,
     ultimoEvento: formatRelative(row.ultimo_evento_at),
     eventosHoy: eventosHoy.get(row.id) ?? 0,
-    webhookUrl: `${baseUrl}/webhooks/miru/v1/${row.id}`,
+    webhookUrl: webhookUrl(row.id),
     versionContrato: row.version_contrato,
   }));
 }
