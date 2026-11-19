@@ -9,26 +9,29 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 
 ## 1. Verificación ejecutada en esta fecha
 
-| Comprobación                       | Resultado                                                          |
-| ---------------------------------- | ------------------------------------------------------------------ |
-| `pnpm install --frozen-lockfile`   | OK                                                                 |
-| `pnpm typecheck`                   | OK (4 proyectos)                                                   |
-| `pnpm lint`                        | OK                                                                 |
-| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                              |
-| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                 |
-| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)           |
-| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                     |
-| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400   |
-| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina      |
-| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado |
-| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000         |
-| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)           |
-| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado         |
-| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                 |
-| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)  |
-| Ingesta: duplicado                 | `200 duplicate`                                                    |
-| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión     |
-| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis       |
+| Comprobación                       | Resultado                                                           |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`   | OK                                                                  |
+| `pnpm typecheck`                   | OK (4 proyectos)                                                    |
+| `pnpm lint`                        | OK                                                                  |
+| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                               |
+| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                  |
+| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)            |
+| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                      |
+| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400    |
+| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina       |
+| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado  |
+| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000          |
+| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)            |
+| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado          |
+| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                  |
+| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)   |
+| Ingesta: duplicado                 | `200 duplicate`                                                     |
+| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión      |
+| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis        |
+| Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía             |
+| Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000) |
+| Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica              |
 
 ## 2. Fases
 
@@ -43,7 +46,7 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token | **Hecho** (18-nov-2026)          | —          |
 | Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Hecho** (aprobado 18-nov-2026) | —          |
 | Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | **Hecho** (19-nov-2026)          | Esquema    |
-| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | Listo para empezar               | Ingesta    |
+| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | **Hecho** (19-nov-2026)          | Ingesta    |
 | DataSource real + Realtime (`P8b`, 2/2)    | Consultas con RLS y suscripción a `dashboard_metrics_daily`                                          | Listo para empezar               | Esquema    |
 | Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                        | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
@@ -68,9 +71,7 @@ Decisiones del fee:
 
 Secuencia siguiente (una fase por sesión):
 
-1. Worker BullMQ en `apps/worker`: procesar `webhook_events` pendientes, aplicar el pedido solo si
-   `external_updated_at` es mayor y marcar `processed_at`.
-2. `DataSource` real en `apps/web` + Realtime del dashboard.
+1. `DataSource` real en `apps/web` + Realtime del dashboard.
 
 ## 4. Entorno local (notas reales de esta máquina)
 
@@ -81,9 +82,12 @@ Secuencia siguiente (una fase por sesión):
 - **Ingesta**: lee `.env` de la raíz del repo (o de `apps/ingest`). Necesita Redis
   (`docker compose up -d redis`) y arranca con `pnpm --filter @miru/ingest dev`. El transporte
   está documentado en [`integraciones/MIRU_V1_TRANSPORTE.md`](integraciones/MIRU_V1_TRANSPORTE.md).
+- **Worker**: usa el mismo `.env` y arranca con `pnpm --filter @miru/worker dev`. Consume la cola
+  `miru-webhooks` con **concurrencia 1** para que la regla de orden (D-07) no dependa de carreras;
+  se cierra con `Ctrl+C`.
 - **Datos de prueba locales** (base de desarrollo, no se commitean): tenant `Tienda Prueba`,
-  conexión Dropi activa y 4 eventos en `webhook_events` con su job en Redis, listos para probar
-  el worker de la siguiente fase.
+  conexión Dropi activa, 4 pedidos y 6 eventos ya procesados. Sirven para validar la WebApp en la
+  siguiente fase.
 - **CLI de Supabase**: el shim `C:\Users\joe\AppData\Roaming\npm\supabase.ps1` **se cuelga** al
   invocarlo (`supabase --version` no responde). Mientras se actualice el CLI (hay v3.x
   disponible), se usa el binario directo:
