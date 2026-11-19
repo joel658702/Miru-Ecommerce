@@ -64,9 +64,13 @@ el cliente (D-05).
 
 ### 3.5 Finanzas `/finanzas`
 
-- KPI de ventas brutas, Fee Miru 5 % («—» en demo), costo de fletes y utilidad neta.
+- KPI de ventas brutas, Fee Miru 5 %, costo de fletes y utilidad neta.
 - Tabla de desglose por plataforma con columna «Fee Miru (5 %)».
-- **P9**: selección de período (hoy/semana/mes) sobre `dashboard_metrics_daily`.
+- **Selector de período** (hoy / 7 días / 30 días) implementado en P9: filtra por
+  `external_created_at` en hora de Bogotá. Se calcula sobre `orders` porque el desglose por
+  plataforma no existe en `dashboard_metrics_daily`.
+- La utilidad es el fee de entregados menos el de devueltos; los fletes no se cuentan (los paga el
+  dropshipper).
 
 ### 3.6 Conexiones `/conexiones`
 

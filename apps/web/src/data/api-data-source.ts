@@ -2,6 +2,7 @@ import type {
   ConnectionRecord,
   DataSource,
   DataSourceState,
+  FinancePeriod,
   FinanceSummary,
   KpiSummary,
   OrderRecord,
@@ -43,8 +44,9 @@ function messageForStatus(status: number): string {
  * operador y aplica RLS. Mantiene la misma interfaz `DataSource` que el demo.
  */
 export class ApiDataSource implements DataSource {
-  private async request<T>(resource: string): Promise<T> {
-    const response = await fetch(`/api/data/${resource}`, {
+  private async request<T>(resource: string, query?: string): Promise<T> {
+    const url = query === undefined ? `/api/data/${resource}` : `/api/data/${resource}?${query}`;
+    const response = await fetch(url, {
       credentials: "same-origin",
       cache: "no-store",
     });
@@ -83,9 +85,12 @@ export class ApiDataSource implements DataSource {
     return this.request<ProductRecord[]>("products");
   }
 
-  async getFinanceSummary(state?: DataSourceState): Promise<FinanceSummary> {
+  async getFinanceSummary(
+    state?: DataSourceState,
+    period: FinancePeriod = "mes",
+  ): Promise<FinanceSummary> {
     if (ApiDataSource.checkState(state)) return EMPTY_FINANCE;
-    return this.request<FinanceSummary>("finance");
+    return this.request<FinanceSummary>("finance", `periodo=${period}`);
   }
 
   async getConnections(state?: DataSourceState): Promise<ConnectionRecord[]> {

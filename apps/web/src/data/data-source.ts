@@ -98,6 +98,15 @@ export interface PlatformFinanceBreakdown {
   pedidos: number;
 }
 
+/** Período del balance financiero (P9): hoy, últimos 7 días o últimos 30. */
+export type FinancePeriod = "hoy" | "semana" | "mes";
+
+export const FINANCE_PERIODS: { value: FinancePeriod; label: string }[] = [
+  { value: "hoy", label: "Hoy" },
+  { value: "semana", label: "7 días" },
+  { value: "mes", label: "30 días" },
+];
+
 export interface FinanceSummary {
   ventasBrutasCents: number;
   costoFletesCents: number;
@@ -124,6 +133,6 @@ export interface DataSource {
   getOrders(state?: DataSourceState): Promise<OrderRecord[]>;
   getWarranties(state?: DataSourceState): Promise<WarrantyRecord[]>;
   getProducts(state?: DataSourceState): Promise<ProductRecord[]>;
-  getFinanceSummary(state?: DataSourceState): Promise<FinanceSummary>;
+  getFinanceSummary(state?: DataSourceState, period?: FinancePeriod): Promise<FinanceSummary>;
   getConnections(state?: DataSourceState): Promise<ConnectionRecord[]>;
 }

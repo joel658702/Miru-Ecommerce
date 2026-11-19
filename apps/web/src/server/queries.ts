@@ -96,12 +96,18 @@ const ORDER_SELECT = [
   "order_items(sku, qty, unit_price_cents)",
 ].join(", ");
 
-async function fetchOrderRows(ctx: DataContext): Promise<OrderRow[]> {
-  const { data, error } = await ctx.client
+async function fetchOrderRows(ctx: DataContext, sinceIso?: string): Promise<OrderRow[]> {
+  let query = ctx.client
     .from("orders")
     .select(ORDER_SELECT)
     .order("external_created_at", { ascending: false })
     .limit(500);
+
+  if (sinceIso !== undefined) {
+    query = query.gte("external_created_at", sinceIso);
+  }
+
+  const { data, error } = await query;
 
   if (error !== null) {
     throw error;
@@ -204,8 +210,8 @@ export async function loadKpis(ctx: DataContext): Promise<KpiSummary> {
   };
 }
 
-export async function loadFinance(ctx: DataContext): Promise<FinanceSummary> {
-  const rows = await fetchOrderRows(ctx);
+export async function loadFinance(ctx: DataContext, sinceIso?: string): Promise<FinanceSummary> {
+  const rows = await fetchOrderRows(ctx, sinceIso);
   return computeFinance(rows.map(toFacts));
 }
 

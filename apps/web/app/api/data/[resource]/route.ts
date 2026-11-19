@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getServerClient } from "@/src/lib/supabase/server";
 import { getAdminClient } from "@/src/server/admin";
+import { isFinancePeriod, periodStartIso } from "@/src/server/period";
 import {
   loadConnections,
   loadFinance,
@@ -49,8 +50,11 @@ export async function GET(
         return NextResponse.json(await loadWarranties(ctx));
       case "products":
         return NextResponse.json(await loadProducts(ctx));
-      case "finance":
-        return NextResponse.json(await loadFinance(ctx));
+      case "finance": {
+        const requested = new URL(_request.url).searchParams.get("periodo");
+        const period = isFinancePeriod(requested) ? requested : "mes";
+        return NextResponse.json(await loadFinance(ctx, periodStartIso(period)));
+      }
       case "connections":
         return NextResponse.json(await loadConnections(ctx));
       default:

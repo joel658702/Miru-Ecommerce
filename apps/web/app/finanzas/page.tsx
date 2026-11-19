@@ -10,7 +10,8 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { dataSource } from "@/src/data";
-import type { DataSourceState, FinanceSummary } from "@/src/data/data-source";
+import { FINANCE_PERIODS } from "@/src/data/data-source";
+import type { DataSourceState, FinancePeriod, FinanceSummary } from "@/src/data/data-source";
 
 function FinanzasContent() {
   const searchParams = useSearchParams();
@@ -19,8 +20,9 @@ function FinanzasContent() {
   const [finance, setFinance] = useState<FinanceSummary | null>(null);
   const [loading, setLoading] = useState(stateParam === "loading");
   const [error, setError] = useState<string | null>(null);
+  const [periodo, setPeriodo] = useState<FinancePeriod>("mes");
 
-  const loadFinance = async (targetState: DataSourceState) => {
+  const loadFinance = async (targetState: DataSourceState, period: FinancePeriod) => {
     if (targetState === "loading") {
       setLoading(true);
       setError(null);
@@ -29,7 +31,7 @@ function FinanzasContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await dataSource.getFinanceSummary(targetState);
+      const res = await dataSource.getFinanceSummary(targetState, period);
       setFinance(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar balance financiero.");
@@ -39,8 +41,8 @@ function FinanzasContent() {
   };
 
   useEffect(() => {
-    loadFinance(stateParam);
-  }, [stateParam]);
+    loadFinance(stateParam, periodo);
+  }, [stateParam, periodo]);
 
   if (loading) {
     return (
@@ -60,7 +62,7 @@ function FinanzasContent() {
       <ErrorState
         title="Error al consultar finanzas"
         description={error}
-        onRetry={() => loadFinance("data")}
+        onRetry={() => loadFinance("data", periodo)}
       />
     );
   }
@@ -71,20 +73,47 @@ function FinanzasContent() {
         title="Sin registros financieros"
         description="No hay movimientos registrados para el período seleccionado."
         actionLabel="Restablecer"
-        onAction={() => loadFinance("data")}
+        onAction={() => loadFinance("data", periodo)}
       />
     );
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
-          Balance Financiero y Liquidación
-        </h1>
-        <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
-          Consolidado monetario en COP (valores enteros en centavos sin redondeo float)
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--color-neutral-900)]">
+            Balance Financiero y Liquidación
+          </h1>
+          <p className="mt-1 text-sm text-[var(--color-neutral-500)]">
+            Consolidado monetario en COP (valores enteros en centavos sin redondeo float)
+          </p>
+        </div>
+
+        <div
+          role="group"
+          aria-label="Período del balance"
+          className="inline-flex rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-card)] p-1"
+        >
+          {FINANCE_PERIODS.map((option) => {
+            const active = option.value === periodo;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setPeriodo(option.value)}
+                aria-pressed={active}
+                className={`min-h-[36px] rounded-md px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${
+                  active
+                    ? "bg-[var(--color-neutral-900)] text-white"
+                    : "text-[var(--color-neutral-600)] hover:bg-[var(--color-surface-canvas)]"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* KPI Financial Cards */}
