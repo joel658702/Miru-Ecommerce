@@ -3,29 +3,50 @@
 Objetivo: WebApp pública con HTTPS, dominio y datos reales, con los estándares que las
 plataformas de origen exigen para aprobar la integración.
 
+## Estado actual (19-nov-2026)
+
+| Pieza                | Valor                                                                                    |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| WebApp en producción | **https://miru-ecommerce-12.vercel.app** (Vercel, team `miru19`)                         |
+| Proyecto Vercel      | `miru-ecommerce-12` · root `apps/web` · repo `joel658702/Miru-Ecommerce`                 |
+| Base de datos / Auth | Supabase Cloud, ref `zgvfaqhahutkarbbwagi` (us-east-2)                                   |
+| Esquema aplicado     | 9 tablas con RLS activo (migración `0001_init.sql`)                                      |
+| Auth                 | Site URL y redirects apuntando al dominio de Vercel                                      |
+| Tenant inicial       | `Miru` con el owner `joe.miranda02z@gmail.com`                                           |
+| Variables en Vercel  | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
+| Datos                | **Vacíos** (producción limpia; el seed demo no se cargó)                                 |
+
+Verificado en producción: `/` sin sesión → `/login` (307), login con Supabase Cloud, correo en el
+header, **sin badge DEMO**, `/operadores` operativo.
+
+Pendiente para la integración: **host público de ingesta + worker + Redis** (Vercel no ejecuta
+procesos de larga vida) y **dominio propio** si se quiere dejar de usar `*.vercel.app`.
+
 ## 0. Antes de empezar: una decisión que hay que registrar
 
 `AGENTS.md` (D-03) dice: **«Vercel está descartado»** para producción; la topología objetivo es
-**VPS Contabo + Cloudflare**. El dueño pidió el 19-nov-2026 desplegar la WebApp en **Vercel**.
-Mientras esa decisión no se refleje en `AGENTS.md` / `docs/CONTEXT.md` (documentos bloqueados,
-los edita el dueño), este runbook queda como **propuesta autorizada verbalmente**.
+**VPS Contabo + Cloudflare**. El dueño pidió el 19-nov-2026 desplegar la WebApp en **Vercel** y el
+despliegue se hizo con su autorización. Falta que esa decisión se refleje en `AGENTS.md` /
+`docs/CONTEXT.md` (documentos bloqueados, los edita el dueño); mientras tanto, este runbook es la
+referencia operativa de lo desplegado.
 
 Consecuencia técnica de Vercel: **solo puede vivir la WebApp**. La ingesta (`apps/ingest`) y el
 worker (`apps/worker`) son procesos de larga vida y **no corren en Vercel**; necesitan un host con
 procesos persistentes (VPS Contabo, Render, Fly.io, Railway) y un Redis (Upstash o el del VPS).
 
-## 1. Lo que hace falta (lo aporta el dueño)
+## 1. Lo que hace falta
 
-| Recurso                                | Para qué                                         | Quién                           |
-| -------------------------------------- | ------------------------------------------------ | ------------------------------- |
-| Proyecto **Supabase Cloud** (free)     | Base, Auth y Realtime de producción              | Dueño (crear cuenta y proyecto) |
-| Cuenta **Vercel**                      | Hosting de la WebApp                             | Ya hay sesión (`joel658702`)    |
-| **Dominio**                            | URL pública (o subdominio `*.vercel.app` gratis) | Dueño                           |
-| Host para **ingesta + worker + Redis** | Recibir webhooks y procesar pedidos              | Dueño (fase posterior)          |
-| **Secreto HMAC** por canal             | Firmar los webhooks                              | Dueño + plataforma              |
+| Recurso                                | Estado    | Nota                                                 |
+| -------------------------------------- | --------- | ---------------------------------------------------- |
+| Proyecto **Supabase Cloud** (free)     | ✅ Hecho  | ref `zgvfaqhahutkarbbwagi`, esquema y RLS aplicados  |
+| Cuenta **Vercel**                      | ✅ Hecho  | proyecto `miru-ecommerce-12`, dominio `*.vercel.app` |
+| Variables de entorno en Vercel         | ✅ Hecho  | URL + anon + service_role                            |
+| **Dominio propio**                     | Pendiente | Opcional: hoy se usa `miru-ecommerce-12.vercel.app`  |
+| Host para **ingesta + worker + Redis** | Pendiente | Necesario para recibir webhooks en producción        |
+| **Secreto HMAC** por canal             | Pendiente | Lo define el dueño con cada plataforma               |
 
-Sin el proyecto de Supabase no se puede publicar con datos reales: la app apunta hoy a
-`http://127.0.0.1:54321`, que Vercel no puede alcanzar.
+Con Supabase Cloud el panel ya funciona con datos reales; lo que falta para la **integración** es
+el endpoint público de webhooks (host de ingesta) y los secretos por canal.
 
 ## 2. Supabase Cloud
 
