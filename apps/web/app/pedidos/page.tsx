@@ -43,7 +43,11 @@ function PedidosContent() {
   // Toasts
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  const addToast = (titulo: string, descripcion?: string, tone?: "success" | "info" | "warning" | "danger") => {
+  const addToast = (
+    titulo: string,
+    descripcion?: string,
+    tone?: "success" | "info" | "warning" | "danger",
+  ) => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, titulo, descripcion, tone }]);
     setTimeout(() => {
@@ -117,9 +121,7 @@ function PedidosContent() {
       key: "id",
       header: "Pedido",
       render: (r) => (
-        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">
-          {r.id}
-        </span>
+        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">{r.id}</span>
       ),
     },
     {
@@ -176,7 +178,10 @@ function PedidosContent() {
   return (
     <div className="space-y-5">
       {/* Toast Notification Container */}
-      <Toast toasts={toasts} onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))} />
+      <Toast
+        toasts={toasts}
+        onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+      />
 
       {/* Header and Controls */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -185,7 +190,8 @@ function PedidosContent() {
             Gestión de Pedidos
           </h1>
           <p className="text-xs text-[var(--color-neutral-500)]">
-            {filteredOrders.length} {filteredOrders.length === 1 ? "orden encontrada" : "órdenes encontradas"}
+            {filteredOrders.length}{" "}
+            {filteredOrders.length === 1 ? "orden encontrada" : "órdenes encontradas"}
           </p>
         </div>
 
@@ -202,7 +208,12 @@ function PedidosContent() {
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
             </svg>
             <span>Tabla</span>
           </button>
@@ -217,11 +228,37 @@ function PedidosContent() {
             }`}
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+              />
             </svg>
             <span>Kanban</span>
           </button>
         </div>
+
+        <a
+          href="/api/data/export?tipo=pedidos"
+          className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-card)] px-3 text-xs font-semibold text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)] self-start sm:self-auto"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
+            />
+          </svg>
+          Exportar CSV
+        </a>
       </div>
 
       {/* Filter and Search Bar */}
@@ -239,7 +276,9 @@ function PedidosContent() {
             onChangeStatus={setSelectedStatus}
             statusOptions={ORDER_STATUS_OPTIONS}
             onClear={handleClearFilters}
-            hasActiveFilters={selectedPlatforms.length > 0 || selectedStatus !== "todos" || search.length > 0}
+            hasActiveFilters={
+              selectedPlatforms.length > 0 || selectedStatus !== "todos" || search.length > 0
+            }
           />
         </div>
       </div>
@@ -250,7 +289,9 @@ function PedidosContent() {
           columns={columns}
           rows={filteredOrders}
           keyExtractor={(r) => r.id}
-          state={loading ? "loading" : error ? "error" : filteredOrders.length === 0 ? "empty" : "data"}
+          state={
+            loading ? "loading" : error ? "error" : filteredOrders.length === 0 ? "empty" : "data"
+          }
           onSelectRow={(r) => setSelectedOrder(r)}
           onRetry={() => loadOrders("data")}
           emptyTitle="No hay pedidos que coincidan"
@@ -269,7 +310,9 @@ function PedidosContent() {
                 </div>
               </div>
               <p className="text-sm font-semibold text-[var(--color-neutral-900)]">{r.cliente}</p>
-              <p className="text-xs text-[var(--color-neutral-600)]">{r.producto} ({r.unidades} un.) · {r.ciudad}</p>
+              <p className="text-xs text-[var(--color-neutral-600)]">
+                {r.producto} ({r.unidades} un.) · {r.ciudad}
+              </p>
               <div className="flex items-center justify-between pt-1 border-t border-[var(--color-neutral-100)] text-xs">
                 <span className="font-mono text-[var(--color-neutral-500)]">{r.guia}</span>
                 <span className="font-display font-bold text-[var(--color-neutral-900)] tabular-nums">
@@ -320,7 +363,10 @@ function PedidosContent() {
                 <p className="font-mono text-xs font-semibold text-[var(--color-neutral-500)]">
                   Pedido {selectedOrder.id}
                 </p>
-                <h2 id="order-detail-title" className="font-display text-lg font-bold text-[var(--color-neutral-900)] truncate">
+                <h2
+                  id="order-detail-title"
+                  className="font-display text-lg font-bold text-[var(--color-neutral-900)] truncate"
+                >
                   {selectedOrder.cliente}
                 </h2>
               </div>
@@ -331,7 +377,12 @@ function PedidosContent() {
                 className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--color-neutral-500)] hover:bg-[var(--color-neutral-100)] hover:text-[var(--color-neutral-900)] cursor-pointer"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -346,7 +397,10 @@ function PedidosContent() {
 
               {/* Novedad Alert */}
               {selectedOrder.novedadDetalle && (
-                <div role="status" className="rounded-xl border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)] p-3.5 text-xs text-[var(--color-warning-text)] leading-relaxed">
+                <div
+                  role="status"
+                  className="rounded-xl border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)] p-3.5 text-xs text-[var(--color-warning-text)] leading-relaxed"
+                >
                   <span className="font-bold">Novedad registrada: </span>
                   {selectedOrder.novedadDetalle}
                 </div>
@@ -377,38 +431,94 @@ function PedidosContent() {
               {/* Logistics & Delivery details */}
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-3">
-                  <svg className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <svg
+                    className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
                   </svg>
                   <div>
-                    <p className="font-medium text-[var(--color-neutral-900)]">{selectedOrder.producto}</p>
-                    <p className="text-xs text-[var(--color-neutral-500)]">{selectedOrder.unidades} {selectedOrder.unidades === 1 ? "unidad" : "unidades"}</p>
+                    <p className="font-medium text-[var(--color-neutral-900)]">
+                      {selectedOrder.producto}
+                    </p>
+                    <p className="text-xs text-[var(--color-neutral-500)]">
+                      {selectedOrder.unidades}{" "}
+                      {selectedOrder.unidades === 1 ? "unidad" : "unidades"}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  <svg
+                    className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                    />
                   </svg>
                   <div>
-                    <p className="font-medium text-[var(--color-neutral-900)]">{selectedOrder.transportadora}</p>
-                    <p className="font-mono text-xs text-[var(--color-neutral-600)]">Guía {selectedOrder.guia}</p>
+                    <p className="font-medium text-[var(--color-neutral-900)]">
+                      {selectedOrder.transportadora}
+                    </p>
+                    <p className="font-mono text-xs text-[var(--color-neutral-600)]">
+                      Guía {selectedOrder.guia}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                   <p className="text-[var(--color-neutral-700)]">{selectedOrder.ciudad}</p>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <svg
+                    className="h-4 w-4 text-[var(--color-neutral-500)] mt-0.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
                   </svg>
-                  <p className="font-mono text-xs text-[var(--color-neutral-700)]">{selectedOrder.telefono}</p>
+                  <p className="font-mono text-xs text-[var(--color-neutral-700)]">
+                    {selectedOrder.telefono}
+                  </p>
                 </div>
               </div>
 
@@ -420,9 +530,16 @@ function PedidosContent() {
                 <ol className="space-y-3 border-l border-[var(--color-border-subtle)] ml-2 pl-4">
                   {selectedOrder.historial.map((step, idx) => (
                     <li key={idx} className="relative">
-                      <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--color-primary)] ring-4 ring-[var(--color-surface-card)]" aria-hidden="true" />
-                      <p className="text-sm font-medium text-[var(--color-neutral-900)]">{step.titulo}</p>
-                      <p className="text-xs text-[var(--color-neutral-500)]">{step.timestamp} · {step.ubicacion}</p>
+                      <span
+                        className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--color-primary)] ring-4 ring-[var(--color-surface-card)]"
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm font-medium text-[var(--color-neutral-900)]">
+                        {step.titulo}
+                      </p>
+                      <p className="text-xs text-[var(--color-neutral-500)]">
+                        {step.timestamp} · {step.ubicacion}
+                      </p>
                     </li>
                   ))}
                 </ol>
@@ -441,7 +558,11 @@ function PedidosContent() {
               <button
                 type="button"
                 onClick={() => {
-                  addToast("Guía copiada", `Guía ${selectedOrder.guia} copiada al portapapeles.`, "success");
+                  addToast(
+                    "Guía copiada",
+                    `Guía ${selectedOrder.guia} copiada al portapapeles.`,
+                    "success",
+                  );
                 }}
                 className="min-h-[44px] rounded-lg bg-[var(--color-neutral-900)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-neutral-800)] cursor-pointer"
               >
@@ -458,7 +579,11 @@ function PedidosContent() {
 export default function PedidosPage() {
   return (
     <AppShell title="Pedidos">
-      <Suspense fallback={<div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />
+        }
+      >
         <PedidosContent />
       </Suspense>
     </AppShell>

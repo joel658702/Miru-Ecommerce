@@ -38,11 +38,12 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                                    |
 | Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                                      |
 | Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                               |
-| Pruebas del proyecto               | **97** verdes (43 shared, 12 ingesta, 16 worker, 26 web)                                     |
+| Pruebas del proyecto               | **102** verdes (43 shared, 12 ingesta, 16 worker, 31 web)                                    |
 | Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                                       |
 | Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422**            |
 | Rotación A/B/C                     | 10 productos → A: 6, B: 2, C: 2 (los inactivos sin ventas)                                   |
 | Alta de operadores                 | Owner crea (201); el operador ve los datos; crear sin ser owner → **403**; revocar → **204** |
+| Exportar CSV                       | Pedidos 96 filas + cabecera; finanzas con fila TOTAL; sin sesión → **401**                   |
 
 ## 2. Fases
 
@@ -63,6 +64,7 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                              | **Hecho** (19-nov-2026)          | Auth       |
 | Features (`P9`)                            | Período en Finanzas, cambio de estado de garantías y rotación A/B/C                                  | **Hecho** (19-nov-2026)          | DataSource |
 | Alta de operadores                         | `/operadores`: owner crea cuentas (Auth + membresía) y revoca accesos; la lista la ve el tenant      | **Hecho** (19-nov-2026)          | Auth       |
+| Exportar CSV                               | Pedidos y finanzas (según período) con sesión y RLS; UTF-8 con BOM y separador `;`                   | **Hecho** (19-nov-2026)          | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos

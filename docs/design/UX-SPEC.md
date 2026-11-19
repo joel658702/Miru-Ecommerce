@@ -50,6 +50,8 @@ el cliente (D-05).
   cliente, transportadora, guía, ítems e historial.
 - En móvil, las filas se convierten en tarjetas (`renderMobileCard`).
 - Estados: `loading` (skeleton), `empty` (sin resultados para el filtro), `error` (reintento).
+- **Exportar CSV** del listado (mismos datos con RLS): `pedido; fecha; plataforma; estado; cliente;
+teléfono; ciudad; guía; transportadora; producto; unidades; venta_cop; utilidad_cop`.
 
 ### 3.3 Garantías `/garantias`
 
@@ -76,6 +78,8 @@ el cliente (D-05).
   plataforma no existe en `dashboard_metrics_daily`.
 - La utilidad es el fee de entregados menos el de devueltos; los fletes no se cuentan (los paga el
   dropshipper).
+- **Exportar CSV** del período elegido: `canal; pedidos; ventas_cop; fee_miru_cop; fletes_cop` más una
+  fila `TOTAL`.
 
 ### 3.6 Conexiones `/conexiones`
 

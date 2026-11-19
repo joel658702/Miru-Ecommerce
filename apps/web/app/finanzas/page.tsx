@@ -114,6 +114,27 @@ function FinanzasContent() {
             );
           })}
         </div>
+
+        <a
+          href={`/api/data/export?tipo=finanzas&periodo=${periodo}`}
+          className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-card)] px-3 text-xs font-semibold text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)]"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
+            />
+          </svg>
+          Exportar CSV
+        </a>
       </div>
 
       {/* KPI Financial Cards */}
