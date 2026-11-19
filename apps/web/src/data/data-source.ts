@@ -24,12 +24,14 @@ export interface OrderRecord {
   cliente: string;
   telefono: string;
   ciudad: string;
-  departamento: string;
+  /** No viene en el contrato Miru v1: en datos reales se muestra «—». */
+  departamento?: string;
   producto: string;
   unidades: number;
   plataforma: Plataforma;
   transportadora: string;
-  metodoPago: "Contraentrega" | "Anticipado";
+  /** No viene en el contrato Miru v1: en datos reales se muestra «—». */
+  metodoPago?: "Contraentrega" | "Anticipado";
   valorTotalCents: number;
   costoFleteCents: number;
   utilidadNetaCents: number;

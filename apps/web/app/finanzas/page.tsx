@@ -9,7 +9,7 @@ import { StatusChip } from "@/components/ui/StatusChip";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { demoDataSource } from "@/src/data/demo-data-source";
+import { dataSource } from "@/src/data";
 import type { DataSourceState, FinanceSummary } from "@/src/data/data-source";
 
 function FinanzasContent() {
@@ -29,7 +29,7 @@ function FinanzasContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await demoDataSource.getFinanceSummary(targetState);
+      const res = await dataSource.getFinanceSummary(targetState);
       setFinance(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar balance financiero.");

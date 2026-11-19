@@ -6,7 +6,8 @@
     "dev": "next dev --port 3000",
     "build": "pnpm --filter @miru/shared build && next build --webpack",
     "start": "next start --port 3000",
-    "typecheck": "pnpm --filter @miru/shared build && tsc --noEmit"
+    "typecheck": "pnpm --filter @miru/shared build && tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@miru/shared": "workspace:*",
@@ -23,6 +24,7 @@
     "@types/react-dom": "^19.3.0",
     "postcss": "^8.5.32",
     "tailwindcss": "^4.3.5",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
   }
 }

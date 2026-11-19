@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|brand/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|webp|mp4)$).*)",
-  ],
+  // Excluye TODO `/_next` (incluido el WebSocket de HMR: si el proxy lo
+  // intercepta, el handshake falla y la página no hidrata en desarrollo).
+  matcher: ["/((?!_next/|brand/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|webp|mp4)$).*)"],
 };

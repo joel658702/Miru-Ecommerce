@@ -9,7 +9,7 @@ import { StatusChip } from "@/components/ui/StatusChip";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { Toast, type ToastItem } from "@/components/ui/Toast";
-import { demoDataSource } from "@/src/data/demo-data-source";
+import { dataSource } from "@/src/data";
 import type { DataSourceState, Plataforma, WarrantyRecord } from "@/src/data/data-source";
 
 const WARRANTY_STATUS_OPTIONS = [
@@ -52,7 +52,7 @@ function GarantiasContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await demoDataSource.getWarranties(targetState);
+      const res = await dataSource.getWarranties(targetState);
       setWarranties(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar garantías.");

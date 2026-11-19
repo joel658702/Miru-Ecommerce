@@ -7,7 +7,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { SearchInput } from "@/components/ui/SearchInput";
-import { demoDataSource } from "@/src/data/demo-data-source";
+import { dataSource } from "@/src/data";
 import type { DataSourceState, ProductRecord } from "@/src/data/data-source";
 
 function ProductosContent() {
@@ -28,7 +28,7 @@ function ProductosContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await demoDataSource.getProducts(targetState);
+      const res = await dataSource.getProducts(targetState);
       setProducts(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar catálogo de productos.");

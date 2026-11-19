@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { DemoBadge } from "@/components/ui/DemoBadge";
 import { LiveIndicator } from "@/components/ui/LiveIndicator";
 import { getBrowserClient } from "@/src/lib/supabase/client";
+import { isSupabaseConfigured } from "@/src/lib/supabase/env";
 
 export interface HeaderProps {
   title?: string;
@@ -72,7 +73,7 @@ export function Header({ title = "Panel Operativo" }: HeaderProps) {
           <h1 className="font-display text-base md:text-lg font-bold text-[var(--color-neutral-900)] truncate">
             {title}
           </h1>
-          <DemoBadge />
+          {!isSupabaseConfigured() && <DemoBadge />}
         </div>
       </div>
 

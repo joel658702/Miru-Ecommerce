@@ -20,12 +20,12 @@ Los datos son ficticios y no hay autenticación. Lo que cambia con datos reales 
 
 | Ruta          | Título               | Propósito                                      | Estado          |
 | ------------- | -------------------- | ---------------------------------------------- | --------------- |
-| `/`           | Dashboard General    | Salud operativa y financiera del día           | Demo            |
-| `/pedidos`    | Pedidos              | Listado, búsqueda, filtros y detalle de pedido | Demo            |
-| `/garantias`  | Garantías            | Tablero de garantías por estado y detalle      | Demo            |
-| `/productos`  | Productos            | Catálogo con stock, costo y plataformas        | Demo            |
-| `/finanzas`   | Finanzas             | Ventas, fee, fletes y desglose por plataforma  | Demo            |
-| `/conexiones` | Conexiones           | Estado de integraciones y endpoints de webhook | Demo            |
+| `/`           | Dashboard General    | Salud operativa y financiera del día           | Real            |
+| `/pedidos`    | Pedidos              | Listado, búsqueda, filtros y detalle de pedido | Real            |
+| `/garantias`  | Garantías            | Tablero de garantías por estado y detalle      | Real            |
+| `/productos`  | Productos            | Catálogo con stock, costo y plataformas        | Real            |
+| `/finanzas`   | Finanzas             | Ventas, fee, fletes y desglose por plataforma  | Real            |
+| `/conexiones` | Conexiones           | Estado de integraciones y endpoints de webhook | Real            |
 | `/login`      | Acceso de Operadores | Entrada al panel                               | Auth real (P8b) |
 
 ## 3. Pantallas
@@ -97,7 +97,8 @@ el cliente (D-05).
 - Los avisos transitorios usan `Toast`.
 - El indicador en vivo (`LiveIndicator`) alterna «En vivo» / «Pausado»; el texto de última
   sincronización hoy es fijo («hace 2 min») y **debe** venir del backend en P8b.
-- El badge **DEMO** es permanente mientras el `DataSource` sea el de demo.
+- El badge **DEMO** solo aparece cuando la WebApp no tiene Supabase configurado (origen de datos
+  de demo). Con datos reales desaparece.
 
 ## 5. Responsive
 
@@ -125,16 +126,16 @@ el cliente (D-05).
 - Tablas con `role="region"`, `aria-label` y foco por teclado.
 - `prefers-reduced-motion`: sin animaciones y póster estático en la intro.
 
-## 8. Deuda conocida (demo)
+## 8. Deuda conocida
 
-| Tema           | Estado                          | Nota                                                 |
-| -------------- | ------------------------------- | ---------------------------------------------------- |
-| Intro de marca | 10 s de video, cierre a los 2 s | Decidir: alargar el temporizador o recortar el video |
-| «hace 2 min»   | Texto fijo                      | Debe venir de la última sincronización real          |
-| Login          | Auth real (18-nov)              | Falta proteger rutas y aplicar RLS                   |
-| Datos          | Ficticios                       | Reemplazo del `DataSource` en P8b                    |
-| Realtime       | No implementado                 | Suscripción a `dashboard_metrics_daily`              |
-| Fee Miru       | «—»                             | Correcto hasta que la BD lo provea                   |
+| Tema           | Estado                          | Nota                                                     |
+| -------------- | ------------------------------- | -------------------------------------------------------- |
+| Intro de marca | 10 s de video, cierre a los 2 s | Decidir: alargar el temporizador o recortar el video     |
+| «hace 2 min»   | Texto fijo                      | Debe venir de la última sincronización real              |
+| Login          | Auth real (18-nov)              | Falta proteger rutas (RLS ya aplica en los datos)        |
+| Datos          | Reales vía `/api/data`          | Sustituido en P8b (19-nov-2026); sin sesión → 401        |
+| Realtime       | No implementado                 | Suscripción a `dashboard_metrics_daily` (siguiente fase) |
+| Fee Miru       | Calculado en BD                 | Se muestra tal cual llega; la app nunca lo recalcula     |
 
 ## 9. Criterios de aceptación sugeridos para P8b
 

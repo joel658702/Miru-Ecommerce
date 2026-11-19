@@ -32,6 +32,10 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía             |
 | Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000) |
 | Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica              |
+| Datos reales en la UI              | `/pedidos` 4 órdenes, `/conexiones` Dropi (8 eventos hoy)           |
+| KPIs con regla del dueño           | ventas 3.000.000, fee 150.000, utilidad 85.005, fletes 0, tasa 50 % |
+| API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                    |
+| Pruebas del proyecto               | **71** verdes (43 shared, 12 ingesta, 11 worker, 5 web)             |
 
 ## 2. Fases
 
@@ -47,7 +51,8 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Hecho** (aprobado 18-nov-2026) | —          |
 | Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | **Hecho** (19-nov-2026)          | Esquema    |
 | Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | **Hecho** (19-nov-2026)          | Ingesta    |
-| DataSource real + Realtime (`P8b`, 2/2)    | Consultas con RLS y suscripción a `dashboard_metrics_daily`                                          | Listo para empezar               | Esquema    |
+| DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo             | **Hecho** (19-nov-2026)          | Esquema    |
+| Realtime + métricas (`P8b`, 3/3)           | Job que llena `dashboard_metrics_daily` y suscripción privada pausable                               | Pendiente                        | DataSource |
 | Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                        | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
@@ -62,23 +67,35 @@ Contenido: `tenants` + `tenant_members` con `add_owner()` (enmienda E-01), `conn
 `products`, `warranties` sin fee (devoluciones diferidas), `dashboard_metrics_daily` (D-08) y RLS
 con políticas por tenant en las 9 tablas.
 
-Decisiones del fee:
+Decisiones del fee y de la utilidad:
 
-- **Resuelto:** 5 % por ítem, redondeado al centavo más cercano con mitad hacia arriba, en
+- **Fee (resuelto):** 5 % por ítem, redondeado al centavo más cercano con mitad hacia arriba, en
   aritmética entera: `((precio × cantidad) × 5 + 50) / 100`. Casos: 999c → 50; 10c → 1; 9c → 0.
-- **Diferido:** la regla de cobro del fee en devoluciones sigue sin implementarse (D-05). Por eso
-  `utilidad_neta_cents` se almacena en las métricas diarias y su fórmula queda POR CONFIRMAR.
+- **Utilidad (regla del dueño, 19-nov-2026):** es el **5 % neto sobre la venta de los pedidos
+  ENTREGADOS**; los **DEVUELTOS descuentan** su fee del saldo. Los **fletes no se cuentan**: los
+  paga el dropshipper. Implementado en [`apps/web/src/server/aggregate.ts`](../apps/web/src/server/aggregate.ts)
+  con pruebas propias.
+- **Fuera de alcance:** el detalle de liquidación/cobro del fee a la plataforma (D-05) sigue
+  diferido; aquí solo se calcula el saldo del panel.
 
 Secuencia siguiente (una fase por sesión):
 
-1. `DataSource` real en `apps/web` + Realtime del dashboard.
+1. Job de métricas diarias (`dashboard_metrics_daily`) + Realtime en el dashboard, con pausa al
+   ocultar la pestaña.
 
 ## 4. Entorno local (notas reales de esta máquina)
 
-- **WebApp**: Next solo lee `.env*` desde `apps/web`. Las dos variables públicas
-  (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) se copian a
-  `apps/web/.env.local`, que está en `.gitignore`. Sin ellas la app entra en **modo demo** y
-  `/login` muestra «Conexión pendiente».
+- **WebApp**: Next solo lee `.env*` desde `apps/web`. Ahí van las dos públicas
+  (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`), la de servidor
+  `SUPABASE_SERVICE_ROLE_KEY` (solo para contadores que la RLS no expone) y
+  `NEXT_PUBLIC_INGEST_URL` (URL que muestra Conexiones). Sin las públicas, la app entra en
+  **modo demo**.
+- **Orígenes de desarrollo**: `next.config.ts` declara `allowedDevOrigins` con `localhost` y
+  `127.0.0.1`; sin eso Next bloquea `/_next/hmr`, la página **no hidrata** y el login parece
+  «muerto» en desarrollo.
+- **Membresía del operador**: con RLS activo, un usuario sin fila en `tenant_members` no ve
+  pedidos. El trigger `add_owner()` solo la crea si hay `auth.uid()`, así que los tenants
+  sembrados por SQL necesitan la membresía a mano.
 - **Ingesta**: lee `.env` de la raíz del repo (o de `apps/ingest`). Necesita Redis
   (`docker compose up -d redis`) y arranca con `pnpm --filter @miru/ingest dev`. El transporte
   está documentado en [`integraciones/MIRU_V1_TRANSPORTE.md`](integraciones/MIRU_V1_TRANSPORTE.md).
@@ -86,8 +103,8 @@ Secuencia siguiente (una fase por sesión):
   `miru-webhooks` con **concurrencia 1** para que la regla de orden (D-07) no dependa de carreras;
   se cierra con `Ctrl+C`.
 - **Datos de prueba locales** (base de desarrollo, no se commitean): tenant `Tienda Prueba`,
-  conexión Dropi activa, 4 pedidos y 6 eventos ya procesados. Sirven para validar la WebApp en la
-  siguiente fase.
+  conexión Dropi activa, 4 pedidos (1 entregado, 1 devuelto, 2 pendientes) y 8 eventos procesados.
+  Sirven para validar la WebApp mientras no haya tráfico real.
 - **CLI de Supabase**: el shim `C:\Users\joe\AppData\Roaming\npm\supabase.ps1` **se cuelga** al
   invocarlo (`supabase --version` no responde). Mientras se actualice el CLI (hay v3.x
   disponible), se usa el binario directo:

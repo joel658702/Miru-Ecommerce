@@ -10,7 +10,7 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { KanbanCard } from "@/components/ui/KanbanCard";
 import { Toast, type ToastItem } from "@/components/ui/Toast";
-import { demoDataSource } from "@/src/data/demo-data-source";
+import { dataSource } from "@/src/data";
 import type { DataSourceState, OrderRecord, Plataforma } from "@/src/data/data-source";
 
 const ORDER_STATUS_OPTIONS = [
@@ -60,7 +60,7 @@ function PedidosContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await demoDataSource.getOrders(targetState);
+      const res = await dataSource.getOrders(targetState);
       setOrders(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar pedidos.");
@@ -369,7 +369,7 @@ function PedidosContent() {
                 <div>
                   <p className="text-xs text-[var(--color-neutral-500)]">Método de recaudo</p>
                   <p className="mt-0.5 text-sm font-semibold text-[var(--color-neutral-800)]">
-                    {selectedOrder.metodoPago}
+                    {selectedOrder.metodoPago ?? "—"}
                   </p>
                 </div>
                 <div>
@@ -407,7 +407,10 @@ function PedidosContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <p className="text-[var(--color-neutral-700)]">{selectedOrder.ciudad}, {selectedOrder.departamento}</p>
+                  <p className="text-[var(--color-neutral-700)]">
+                    {selectedOrder.ciudad}
+                    {selectedOrder.departamento ? `, ${selectedOrder.departamento}` : ""}
+                  </p>
                 </div>
 
                 <div className="flex items-start gap-3">

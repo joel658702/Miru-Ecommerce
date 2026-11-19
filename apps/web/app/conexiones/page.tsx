@@ -6,7 +6,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { demoDataSource } from "@/src/data/demo-data-source";
+import { dataSource } from "@/src/data";
 import type { ConnectionRecord, DataSourceState } from "@/src/data/data-source";
 
 function ConexionesContent() {
@@ -26,7 +26,7 @@ function ConexionesContent() {
     setLoading(true);
     setError(null);
     try {
-      const res = await demoDataSource.getConnections(targetState);
+      const res = await dataSource.getConnections(targetState);
       setConnections(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar conexiones.");
