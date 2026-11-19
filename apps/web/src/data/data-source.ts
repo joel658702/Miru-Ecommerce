@@ -96,6 +96,8 @@ export interface PlatformFinanceBreakdown {
   ventasCents: number;
   fletesCents: number;
   pedidos: number;
+  /** Fee Miru sumado de la BD; `null` en el modo demo. */
+  feeMiruCents?: number | null;
 }
 
 /** Período del balance financiero (P9): hoy, últimos 7 días o últimos 30. */

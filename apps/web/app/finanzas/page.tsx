@@ -197,8 +197,8 @@ function FinanzasContent() {
                   <td className="px-4 py-2.5 font-display text-xs text-[var(--color-neutral-600)] tabular-nums">
                     {formatCOP(item.fletesCents)}
                   </td>
-                  <td className="px-4 py-2.5 font-display text-xs text-[var(--color-neutral-400)] tabular-nums">
-                    —
+                  <td className="px-4 py-2.5 font-display text-xs text-[var(--color-neutral-600)] tabular-nums">
+                    {item.feeMiruCents != null ? formatCOP(item.feeMiruCents) : "—"}
                   </td>
                 </tr>
               ))}

@@ -85,7 +85,13 @@ describe("computeFinance", () => {
     expect(finance.utilidadNetaCents).toBe(775_005);
     expect(finance.costoFletesCents).toBe(0);
     expect(finance.desglosePlataforma).toEqual([
-      { plataforma: "Dropi", ventasCents: 18_099_900, fletesCents: 0, pedidos: 2 },
+      {
+        plataforma: "Dropi",
+        ventasCents: 18_099_900,
+        fletesCents: 0,
+        pedidos: 2,
+        feeMiruCents: 840_000 + 64_995,
+      },
     ]);
   });
 });

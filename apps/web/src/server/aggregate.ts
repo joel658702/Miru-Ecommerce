@@ -143,11 +143,15 @@ export function computeFinance(orders: OrderFacts[]): FinanceSummary {
     feeMiruCents: totals.feeMiruCents,
     desglosePlataforma: PLATFORMS.map((plataforma) => {
       const ofPlatform = orders.filter((order) => order.plataforma === plataforma);
-      const ventasCents = ofPlatform
-        .filter((order) => order.estado !== "cancelado")
-        .reduce((sum, order) => sum + order.subtotalCents, 0);
+      const vigentes = ofPlatform.filter((order) => order.estado !== "cancelado");
 
-      return { plataforma, ventasCents, fletesCents: 0, pedidos: ofPlatform.length };
+      return {
+        plataforma,
+        ventasCents: vigentes.reduce((sum, order) => sum + order.subtotalCents, 0),
+        fletesCents: 0,
+        pedidos: ofPlatform.length,
+        feeMiruCents: vigentes.reduce((sum, order) => sum + order.feeMiruCents, 0),
+      };
     }).filter((row) => row.pedidos > 0),
   };
 }
