@@ -5,18 +5,29 @@ plataformas de origen exigen para aprobar la integración.
 
 ## Estado actual (19-nov-2026)
 
-| Pieza                | Valor                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------- |
-| WebApp en producción | **https://miru-ecommerce-12.vercel.app** (Vercel, team `miru19`)                         |
-| Proyecto Vercel      | `miru-ecommerce-12` · root `apps/web` · repo `joel658702/Miru-Ecommerce`                 |
-| Base de datos / Auth | Supabase Cloud, ref `zgvfaqhahutkarbbwagi` (us-east-2)                                   |
-| Esquema aplicado     | 9 tablas con RLS activo (migración `0001_init.sql`)                                      |
-| Auth                 | Site URL y redirects apuntando al dominio de Vercel                                      |
-| Tenant inicial       | `Miru` con el owner `joe.miranda02z@gmail.com`                                           |
-| Variables en Vercel  | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Datos                | 90 pedidos demo cargados sobre `Miru` (se borran antes de la integración)                |
-| VPS Contabo          | `86.48.30.152` — `miru-redis`, `miru-ingest` y `miru-worker` corriendo (Docker)          |
-| Endpoint de webhooks | Solo interno: `http://127.0.0.1:3001` — falta publicarlo con el dominio                  |
+| Pieza                | Valor                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| WebApp en producción | **https://miruecommerce.pro** (Vercel, team `miru19`) + `miru-ecommerce-12.vercel.app`      |
+| Proyecto Vercel      | `miru-ecommerce-12` · root `apps/web` · repo `joel658702/Miru-Ecommerce`                    |
+| Base de datos / Auth | Supabase Cloud, ref `zgvfaqhahutkarbbwagi` (us-east-2)                                      |
+| Esquema aplicado     | 9 tablas con RLS activo (migración `0001_init.sql`)                                         |
+| Auth                 | Site URL `https://miruecommerce.pro` + redirects (www, vercel.app, localhost)               |
+| Tenant inicial       | `Miru` con el owner `joe.miranda02z@gmail.com`                                              |
+| Variables en Vercel  | Supabase (URL, anon, service_role) + `NEXT_PUBLIC_INGEST_URL=https://api.miruecommerce.pro` |
+| Datos                | 90 pedidos demo cargados sobre `Miru` (se borran antes de la integración)                   |
+| VPS Contabo          | `86.48.30.152` — `miru-redis`, `miru-ingest` y `miru-worker` corriendo (Docker)             |
+| Endpoint de webhooks | `https://api.miruecommerce.pro` (Traefik de Coolify; TLS se emite al existir el DNS)        |
+
+### DNS en Hostinger (pendiente de crear)
+
+| Tipo  | Nombre | Valor                                    |
+| ----- | ------ | ---------------------------------------- |
+| A     | `@`    | `216.198.79.1` (y opcional `64.29.17.1`) |
+| CNAME | `www`  | `e0d9e1dabdf38a7c.vercel-dns-017.com`    |
+| A     | `api`  | `86.48.30.152`                           |
+
+`www` redirige con **308** al dominio raíz. Vercel emite el certificado del panel y Traefik el de
+`api.` automáticamente cuando el DNS resuelva.
 
 Verificado en producción: `/` sin sesión → `/login` (307), login con Supabase Cloud, correo en el
 header, **sin badge DEMO**, `/operadores` operativo.

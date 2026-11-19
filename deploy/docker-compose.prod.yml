@@ -34,8 +34,25 @@ services:
       redis:
         condition: service_healthy
     ports:
-      # Solo localhost: el tráfico público entra por Caddy.
+      # Solo localhost: el tráfico público entra por el proxy (Traefik/Caddy).
       - "127.0.0.1:3001:3001"
+    networks:
+      - default
+      - coolify
+    labels:
+      # Publicación con el Traefik de Coolify (este VPS).
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.miru-ingest.rule=Host(`api.miruecommerce.pro`)"
+      - "traefik.http.routers.miru-ingest.entrypoints=https"
+      - "traefik.http.routers.miru-ingest.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.miru-ingest.service=miru-ingest"
+      - "traefik.http.services.miru-ingest.loadbalancer.server.port=3001"
+      - "traefik.http.routers.miru-ingest-http.rule=Host(`api.miruecommerce.pro`)"
+      - "traefik.http.routers.miru-ingest-http.entrypoints=http"
+      - "traefik.http.routers.miru-ingest-http.middlewares=miru-ingest-https"
+      - "traefik.http.middlewares.miru-ingest-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.miru-ingest-https.redirectscheme.permanent=true"
 
   worker:
     build:
@@ -72,3 +89,10 @@ volumes:
   redis-data:
   caddy-data:
   caddy-config:
+
+networks:
+  # Red de datos del stack (redis, ingest, worker).
+  default:
+  # Red compartida con el proxy de Coolify; solo se usa si existe.
+  coolify:
+    external: true
