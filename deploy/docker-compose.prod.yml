@@ -29,7 +29,8 @@ services:
     env_file:
       - .env.prod
     environment:
-      REDIS_URL: redis://redis:6379
+      # Nombre explícito: en la red `coolify` también existe un `redis` ajeno.
+      REDIS_URL: redis://miru-redis:6379
     depends_on:
       redis:
         condition: service_healthy
@@ -63,7 +64,7 @@ services:
     env_file:
       - .env.prod
     environment:
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: redis://miru-redis:6379
     depends_on:
       redis:
         condition: service_healthy

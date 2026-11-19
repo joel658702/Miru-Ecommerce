@@ -16,18 +16,23 @@ plataformas de origen exigen para aprobar la integración.
 | Variables en Vercel  | Supabase (URL, anon, service_role) + `NEXT_PUBLIC_INGEST_URL=https://api.miruecommerce.pro` |
 | Datos                | 90 pedidos demo cargados sobre `Miru` (se borran antes de la integración)                   |
 | VPS Contabo          | `86.48.30.152` — `miru-redis`, `miru-ingest` y `miru-worker` corriendo (Docker)             |
-| Endpoint de webhooks | `https://api.miruecommerce.pro` (Traefik de Coolify; TLS se emite al existir el DNS)        |
+| Endpoint de webhooks | **https://api.miruecommerce.pro** (Traefik de Coolify, TLS Let's Encrypt)                   |
 
-### DNS en Hostinger (pendiente de crear)
+### DNS en Hostinger (activo)
 
-| Tipo  | Nombre | Valor                                    |
-| ----- | ------ | ---------------------------------------- |
-| A     | `@`    | `216.198.79.1` (y opcional `64.29.17.1`) |
-| CNAME | `www`  | `e0d9e1dabdf38a7c.vercel-dns-017.com`    |
-| A     | `api`  | `86.48.30.152`                           |
+| Tipo  | Nombre | Valor                                 |
+| ----- | ------ | ------------------------------------- |
+| A     | `@`    | `216.198.79.1` + `64.29.17.1`         |
+| CNAME | `www`  | `e0d9e1dabdf38a7c.vercel-dns-017.com` |
+| A     | `api`  | `86.48.30.152`                        |
 
-`www` redirige con **308** al dominio raíz. Vercel emite el certificado del panel y Traefik el de
-`api.` automáticamente cuando el DNS resuelva.
+`www` redirige con **308** al dominio raíz. Verificado el 19-nov-2026: el panel responde 200 en
+`https://miruecommerce.pro/login`, `api.miruecommerce.pro/health` responde `{"ok":true}` y el
+certificado de `api.` lo emitió Traefik.
+
+**Ojo con Redis en este VPS:** la ingesta se une a la red `coolify` para que Traefik la publique, y
+en esa red existe otro `redis` (el de Coolify, con contraseña). Por eso `REDIS_URL` usa el nombre
+explícito `redis://miru-redis:6379`; con `redis://redis:6379` el cliente recibe `NOAUTH`.
 
 Verificado en producción: `/` sin sesión → `/login` (307), login con Supabase Cloud, correo en el
 header, **sin badge DEMO**, `/operadores` operativo.

@@ -71,9 +71,9 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Alta de operadores                         | `/operadores`: owner crea cuentas (Auth + membresía) y revoca accesos; la lista la ve el tenant      | **Hecho** (19-nov-2026)          | Auth       |
 | Exportar CSV                               | Pedidos y finanzas (según período) con sesión y RLS; UTF-8 con BOM y separador `;`                   | **Hecho** (19-nov-2026)          | DataSource |
 | Paquete para plataformas                   | Contrato, payload de ejemplo, vector de firma y script `webhook:sign`                                | **Preparado** (19-nov-2026)      | —          |
-| Producción (Vercel)                        | **https://miruecommerce.pro** (DNS pendiente en Hostinger); vercel.app sigue sirviendo el panel      | **Hecho** (19-nov-2026)          | —          |
+| Producción (Vercel)                        | **https://miruecommerce.pro** con TLS; `www` redirige 308; login y datos verificados                 | **Hecho** (19-nov-2026)          | —          |
 | Ingesta + worker en VPS                    | Contabo `86.48.30.152`: redis, ingest y worker corriendo; webhook firmado probado y limpiado         | **Hecho** (19-nov-2026)          | —          |
-| Publicar endpoint de webhooks              | Router `miru-ingest` en Traefik listo; TLS espera el registro A de `api.miruecommerce.pro`           | **Pendiente del DNS**            | —          |
+| Publicar endpoint de webhooks              | **https://api.miruecommerce.pro** con TLS; webhook firmado → 200 y `duplicate` al repetir            | **Hecho** (19-nov-2026)          | —          |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos
