@@ -69,6 +69,38 @@ services:
       redis:
         condition: service_healthy
 
+  mcp:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.mcp
+    container_name: miru-mcp
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    environment:
+      PORT: "3002"
+      HOST: 0.0.0.0
+    ports:
+      # Solo localhost: se publica por Traefik en /mcp.
+      - "127.0.0.1:3002:3002"
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=coolify"
+      - "traefik.http.routers.miru-mcp.rule=Host(`api.miruecommerce.pro`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.miru-mcp.entrypoints=https"
+      - "traefik.http.routers.miru-mcp.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.miru-mcp.service=miru-mcp"
+      - "traefik.http.routers.miru-mcp.priority=100"
+      - "traefik.http.services.miru-mcp.loadbalancer.server.port=3002"
+      - "traefik.http.routers.miru-mcp-http.rule=Host(`api.miruecommerce.pro`) && PathPrefix(`/mcp`)"
+      - "traefik.http.routers.miru-mcp-http.entrypoints=http"
+      - "traefik.http.routers.miru-mcp-http.middlewares=miru-mcp-https"
+      - "traefik.http.middlewares.miru-mcp-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.miru-mcp-https.redirectscheme.permanent=true"
+
   caddy:
     image: caddy:2-alpine
     container_name: miru-caddy

@@ -1,0 +1,17 @@
+# Servidor MCP de solo lectura · imagen de producción
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@11.28.5 --activate
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/mcp/package.json apps/mcp/
+RUN pnpm install --frozen-lockfile --filter @miru/mcp... --filter @miru/shared...
+
+COPY packages/shared packages/shared
+COPY apps/mcp apps/mcp
+RUN pnpm --filter @miru/shared build && pnpm --filter @miru/mcp build
+
+ENV NODE_ENV=production
+EXPOSE 3002
+CMD ["node", "apps/mcp/dist/server.js"]
