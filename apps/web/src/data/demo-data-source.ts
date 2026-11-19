@@ -5,6 +5,8 @@ import type {
   FinancePeriod,
   FinanceSummary,
   KpiSummary,
+  NewOperatorInput,
+  OperatorRecord,
   OrderRecord,
   ProductRecord,
   WarrantyRecord,
@@ -589,6 +591,34 @@ export class DemoDataSource implements DataSource {
 
     DEMO_WARRANTIES[index] = updated;
     return updated;
+  }
+
+  async getOperators(state?: DataSourceState): Promise<OperatorRecord[]> {
+    handleStateCheck(state);
+    if (state === "empty") {
+      return [];
+    }
+
+    return [
+      {
+        userId: "demo-owner",
+        email: "operador@miru.local",
+        rol: "owner",
+        desde: "2026-11-13T09:00:00-05:00",
+      },
+    ];
+  }
+
+  async createOperator(_input: NewOperatorInput): Promise<OperatorRecord> {
+    throw new Error(
+      "El alta de operadores requiere Supabase configurado (no está disponible en modo demo).",
+    );
+  }
+
+  async removeOperator(_userId: string): Promise<void> {
+    throw new Error(
+      "La gestión de operadores requiere Supabase configurado (no está disponible en modo demo).",
+    );
   }
 }
 

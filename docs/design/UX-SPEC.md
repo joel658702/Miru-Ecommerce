@@ -6,10 +6,10 @@ Los datos son ficticios y no hay autenticación. Lo que cambia con datos reales 
 
 ## 1. Modelo de navegación
 
-| Viewport | Navegación                                                                                                           |
-| -------- | -------------------------------------------------------------------------------------------------------------------- |
-| ≥ 768 px | Sidebar fija a la izquierda (colapsable), 6 destinos: Dashboard, Pedidos, Garantías, Productos, Finanzas, Conexiones |
-| < 768 px | Barra inferior fija con 5 ranuras: Dashboard, Pedidos, Garantías, Productos y **Más** (abre Finanzas y Conexiones)   |
+| Viewport | Navegación                                                                                                                       |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| ≥ 768 px | Sidebar fija a la izquierda (colapsable), 7 destinos: Dashboard, Pedidos, Garantías, Productos, Finanzas, Conexiones, Operadores |
+| < 768 px | Barra inferior fija con 5 ranuras: Dashboard, Pedidos, Garantías, Productos y **Más** (abre Finanzas, Conexiones y Operadores)   |
 
 - El destino activo se marca con color `primary` y `aria-current="page"`.
 - El header es `sticky` y muestra: título de la vista, badge **DEMO**, indicador en vivo y
@@ -26,6 +26,7 @@ Los datos son ficticios y no hay autenticación. Lo que cambia con datos reales 
 | `/productos`  | Productos            | Catálogo con stock, costo y plataformas        | Real            |
 | `/finanzas`   | Finanzas             | Ventas, fee, fletes y desglose por plataforma  | Real            |
 | `/conexiones` | Conexiones           | Estado de integraciones y endpoints de webhook | Real            |
+| `/operadores` | Operadores           | Cuentas del tenant: crear y revocar accesos    | Real            |
 | `/login`      | Acceso de Operadores | Entrada al panel                               | Auth real (P8b) |
 
 ## 3. Pantallas
@@ -81,7 +82,15 @@ el cliente (D-05).
 - Tarjeta por plataforma (Dropi, MasterShop, Effi) con estado (activa/pausada/error), último
   evento, eventos de hoy, URL de webhook (mono) y versión de contrato.
 
-### 3.7 Login `/login`
+### 3.7 Operadores `/operadores`
+
+- Tabla con correo, rol (owner/operador) y fecha de alta; el usuario actual se marca «tú».
+- Formulario de alta: correo, contraseña (mínimo 8) y rol. Solo un **owner** puede crear.
+- «Revocar» pide confirmación en la fila; no se puede revocar a uno mismo y siempre debe quedar
+  al menos un owner. Revocar quita la membresía al tenant (la cuenta de Auth permanece).
+- La lista la puede ver cualquier miembro del tenant.
+
+### 3.8 Login `/login`
 
 - Formulario (correo, contraseña con mínimo 6) con validación en cliente y errores accesibles
   (`role="alert"`, mensajes en español).

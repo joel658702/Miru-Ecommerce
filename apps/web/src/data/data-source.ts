@@ -135,6 +135,21 @@ export interface ConnectionRecord {
   versionContrato: string;
 }
 
+export type OperatorRole = "owner" | "operador";
+
+export interface OperatorRecord {
+  userId: string;
+  email: string;
+  rol: OperatorRole;
+  desde: string;
+}
+
+export interface NewOperatorInput {
+  email: string;
+  password: string;
+  rol: OperatorRole;
+}
+
 /**
  * Interfaz unificada de acceso a datos para Miru-Ecommerce (Punto de intercambio para P8b).
  */
@@ -147,4 +162,7 @@ export interface DataSource {
   getConnections(state?: DataSourceState): Promise<ConnectionRecord[]>;
   /** Cambia el estado de una garantía (el flujo válido lo valida el servidor). */
   updateWarrantyStatus(id: string, estado: WarrantyStatus, nota?: string): Promise<WarrantyRecord>;
+  getOperators(state?: DataSourceState): Promise<OperatorRecord[]>;
+  createOperator(input: NewOperatorInput): Promise<OperatorRecord>;
+  removeOperator(userId: string): Promise<void>;
 }

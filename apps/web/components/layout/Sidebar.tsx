@@ -104,6 +104,21 @@ const NAV_ITEMS: NavItem[] = [
       </svg>
     ),
   },
+  {
+    id: "operadores",
+    label: "Operadores",
+    href: "/operadores",
+    icon: ({ className }) => (
+      <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m5-1.13a4 4 0 10-4-4 4 4 0 004 4zm6-4a3 3 0 10-3-3"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export function Sidebar() {
@@ -118,7 +133,11 @@ export function Sidebar() {
     >
       {/* Brand Header */}
       <div className="flex h-16 items-center justify-between border-b border-[var(--color-border-subtle)] px-4">
-        <Link href="/" className="flex items-center gap-2.5 min-w-0" aria-label="Inicio Miru-Ecommerce">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 min-w-0"
+          aria-label="Inicio Miru-Ecommerce"
+        >
           <div className="h-9 w-9 shrink-0 relative flex items-center justify-center">
             <Image
               src="/brand/logo-mark.svg"
@@ -144,11 +163,21 @@ export function Sidebar() {
         >
           {collapsed ? (
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"
+              />
             </svg>
           ) : (
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+              />
             </svg>
           )}
         </button>
@@ -157,10 +186,7 @@ export function Sidebar() {
       {/* Nav Links */}
       <nav aria-label="Navegación principal" className="flex-1 p-3 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
           return (
             <Link
@@ -196,8 +222,12 @@ export function Sidebar() {
       {!collapsed && (
         <div className="border-t border-[var(--color-border-subtle)] p-4 space-y-3">
           <div className="rounded-lg bg-[var(--color-surface-canvas)] p-3 border border-[var(--color-border-subtle)]">
-            <p className="text-xs font-semibold text-[var(--color-neutral-900)]">Canales integrados</p>
-            <p className="mt-1 text-xs text-[var(--color-neutral-500)]">Dropi · MasterShop · Effi</p>
+            <p className="text-xs font-semibold text-[var(--color-neutral-900)]">
+              Canales integrados
+            </p>
+            <p className="mt-1 text-xs text-[var(--color-neutral-500)]">
+              Dropi · MasterShop · Effi
+            </p>
           </div>
 
           <Link
@@ -206,7 +236,12 @@ export function Sidebar() {
           >
             <span>Acceso operadores</span>
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+              />
             </svg>
           </Link>
         </div>

@@ -5,6 +5,8 @@ import type {
   FinancePeriod,
   FinanceSummary,
   KpiSummary,
+  NewOperatorInput,
+  OperatorRecord,
   OrderRecord,
   ProductRecord,
   WarrantyRecord,
@@ -128,6 +130,66 @@ export class ApiDataSource implements DataSource {
     }
 
     return (await response.json()) as WarrantyRecord;
+  }
+
+  async getOperators(state?: DataSourceState): Promise<OperatorRecord[]> {
+    if (ApiDataSource.checkState(state)) return [];
+    return this.request<OperatorRecord[]>("operators");
+  }
+
+  async createOperator(input: NewOperatorInput): Promise<OperatorRecord> {
+    const response = await fetch("/api/data/operators", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(input),
+    });
+
+    if (!response.ok) {
+      const detail = (await response.json().catch(() => null)) as {
+        error?: string;
+        message?: string;
+      } | null;
+
+      if (response.status === 409 && detail?.error === "email_exists") {
+        throw new Error("Ya existe una cuenta con ese correo.");
+      }
+      if (detail?.error === "invalid_input" && detail.message !== undefined) {
+        throw new Error(detail.message);
+      }
+      if (response.status === 403) {
+        throw new Error("Solo el owner del tenant puede crear operadores.");
+      }
+
+      throw new Error("No se pudo crear el operador. Intenta de nuevo.");
+    }
+
+    return (await response.json()) as OperatorRecord;
+  }
+
+  async removeOperator(userId: string): Promise<void> {
+    const response = await fetch(`/api/data/operators/${userId}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+
+    if (response.status === 204) {
+      return;
+    }
+
+    const detail = (await response.json().catch(() => null)) as { error?: string } | null;
+
+    if (detail?.error === "cannot_remove_self") {
+      throw new Error("No puedes revocar tu propio acceso.");
+    }
+    if (detail?.error === "last_owner") {
+      throw new Error("Debe quedar al menos un owner en el tenant.");
+    }
+    if (response.status === 403) {
+      throw new Error("Solo el owner del tenant puede revocar accesos.");
+    }
+
+    throw new Error("No se pudo revocar el acceso. Intenta de nuevo.");
   }
 }
 
