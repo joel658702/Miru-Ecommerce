@@ -21,7 +21,8 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400   |
 | Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina      |
 | `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado |
-| Fee Miru en BD                     | Ítems 2 × 8.400.000 + 999 → fee 840.049; al borrar uno → 840.000   |
+| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000         |
+| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)           |
 | Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado         |
 | RLS                                | `authenticated` sin membresía → 0 pedidos visibles                 |
 
@@ -30,43 +31,42 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 Los identificadores `P3`, `P8a`, `P8b` y `P9` son los que ya usa el repositorio. El resto se
 nombra por frente para no inventar una numeración que el dueño no ha fijado.
 
-| Frente                                     | Alcance                                                                                              | Estado                                            | Depende de |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------- |
-| Contrato canónico (`P3`)                   | Zod del evento `order.upserted`, dinero en centavos, HMAC-SHA256, ventana ±300 s                     | **Hecho**                                         | —          |
-| Shell demo (`P8a`)                         | 7 rutas, datos ficticios tras `DataSource`, sistema de diseño                                        | **Hecho**                                         | —          |
-| Toolchain y CI                             | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, GitHub Actions                                  | **Hecho**                                         | —          |
-| Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token | **Hecho** (18-nov-2026)                           | —          |
-| Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Borrador aplicado en local** (falta aprobación) | —          |
-| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | Listo para empezar                                | Esquema    |
-| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | Listo para empezar                                | Ingesta    |
-| DataSource real + Realtime (`P8b`, 2/2)    | Consultas con RLS y suscripción a `dashboard_metrics_daily`                                          | Listo para empezar                                | Esquema    |
-| Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                                         | DataSource |
-| Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**                         | —          |
+| Frente                                     | Alcance                                                                                              | Estado                           | Depende de |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------------------------------- | ---------- |
+| Contrato canónico (`P3`)                   | Zod del evento `order.upserted`, dinero en centavos, HMAC-SHA256, ventana ±300 s                     | **Hecho**                        | —          |
+| Shell demo (`P8a`)                         | 7 rutas, datos ficticios tras `DataSource`, sistema de diseño                                        | **Hecho**                        | —          |
+| Toolchain y CI                             | TS 5.9.3, pnpm 11.28.5, ESLint 10.14.0, Next 16.4.6, GitHub Actions                                  | **Hecho**                        | —          |
+| Supabase local + Auth real (`P8b`, 1/2)    | `supabase start`, `/login` contra Supabase Auth, sesión en cookies, `proxy.ts` que refresca el token | **Hecho** (18-nov-2026)          | —          |
+| Esquema de base de datos (`0001_init.sql`) | Tablas, RLS, fee Miru generado por columna + trigger                                                 | **Hecho** (aprobado 18-nov-2026) | —          |
+| Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | Listo para empezar               | Esquema    |
+| Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | Listo para empezar               | Ingesta    |
+| DataSource real + Realtime (`P8b`, 2/2)    | Consultas con RLS y suscripción a `dashboard_metrics_daily`                                          | Listo para empezar               | Esquema    |
+| Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                        | DataSource |
+| Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
-## 3. Esquema de base de datos (excepción puntual a D-06)
+## 3. Esquema de base de datos
 
-El **18-nov-2026 el dueño autorizó al agente a redactar** el esquema (opción B). El resultado está
-en [`../supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) y se aplicó en
-la base **local** para validarlo. Sigue **pendiente la aprobación final del dueño**: mientras el
-archivo diga «pendiente de aprobación», no debe aplicarse en otro entorno.
+El dueño autorizó al agente a redactarlo y lo **aprobó el 18-nov-2026**. Vive en
+[`../supabase/migrations/0001_init.sql`](../supabase/migrations/0001_init.sql) y es el esquema
+definitivo: `supabase db reset` lo aplica desde cero.
 
 Contenido: `tenants` + `tenant_members` con `add_owner()` (enmienda E-01), `connections`,
 `webhook_events` (idempotencia D-07), `orders` + `order_items` con el fee generado en BD (D-05),
 `products`, `warranties` sin fee (devoluciones diferidas), `dashboard_metrics_daily` (D-08) y RLS
-con políticas por tenant en todas las tablas.
+con políticas por tenant en las 9 tablas.
 
-Dos decisiones quedaron marcadas **POR CONFIRMAR** dentro del SQL:
+Decisiones del fee:
 
-1. **Redondeo del fee por ítem**: hoy trunca a centavos (un ítem de 999 centavos aporta 49, no 50).
-2. **Fórmula de `utilidad_neta_cents`**: se almacena en las métricas diarias; depende de la regla
-   de devoluciones, que sigue diferida.
+- **Resuelto:** 5 % por ítem, redondeado al centavo más cercano con mitad hacia arriba, en
+  aritmética entera: `((precio × cantidad) × 5 + 50) / 100`. Casos: 999c → 50; 10c → 1; 9c → 0.
+- **Diferido:** la regla de cobro del fee en devoluciones sigue sin implementarse (D-05). Por eso
+  `utilidad_neta_cents` se almacena en las métricas diarias y su fórmula queda POR CONFIRMAR.
 
 Secuencia siguiente (una fase por sesión):
 
-1. Aprobación del esquema por el dueño (se quita el aviso de borrador del archivo).
-2. Ingesta Miru v1 en `apps/ingest` (persistir crudo → encolar → ACK < 500 ms).
-3. Worker BullMQ en `apps/worker`.
-4. `DataSource` real en `apps/web` + Realtime del dashboard.
+1. Ingesta Miru v1 en `apps/ingest` (persistir crudo → encolar → ACK < 500 ms).
+2. Worker BullMQ en `apps/worker`.
+3. `DataSource` real en `apps/web` + Realtime del dashboard.
 
 ## 4. Entorno local (notas reales de esta máquina)
 

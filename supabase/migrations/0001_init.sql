@@ -2,10 +2,8 @@
 --
 -- Esquema inicial de la base de datos.
 --
--- Redactado por el agente el 18-nov-2026 con AUTORIZACIÓN EXPLÍCITA del dueño
--- (excepción puntual a D-06). Queda PENDIENTE de su aprobación final: no debe
--- aplicarse en ningún entorno que no sea el local de desarrollo hasta que el
--- dueño lo confirme.
+-- Redactado por el agente el 18-nov-2026 con autorización del dueño (excepción
+-- registrada a D-06) y APROBADO por él el mismo día. Es el esquema definitivo.
 --
 -- Reglas respetadas:
 --   D-04  Montos SIEMPRE enteros en centavos (BIGINT). Ningún float/numeric de
@@ -18,10 +16,11 @@
 --         crudo se persiste antes de procesar (processed_at nulo hasta el worker).
 --   D-08  `dashboard_metrics_daily` (1 fila por día y tenant) publicada en Realtime.
 --
--- Decisiones pendientes de confirmar por el dueño (marcadas como POR CONFIRMAR):
---   1. Redondeo del fee por ítem: hoy TRUNCA a centavos (división entera).
---   2. Fórmula de `utilidad_neta_cents`: se almacena en métricas, no se calcula
---      aquí, porque depende de la regla de devoluciones (diferida).
+-- Decisiones:
+--   1. Fee por ítem: 5 % redondeado al centavo más cercano (mitad hacia arriba),
+--      con aritmética entera: (total * 5 + 50) / 100. Aprobado por el dueño.
+--   2. `utilidad_neta_cents` (POR CONFIRMAR): se almacena en las métricas diarias
+--      y su fórmula depende de la regla de devoluciones, que sigue DIFERIDA.
 
 -- ---------------------------------------------------------------------------
 -- 0. Utilidades
@@ -162,9 +161,9 @@ create table public.order_items (
   qty               integer not null check (qty > 0),
   unit_price_cents  bigint not null check (unit_price_cents >= 0),
   unit_cost_cents   bigint not null check (unit_cost_cents >= 0),
-  -- D-05: fee Miru 5 % por ítem, columna generada, aritmética ENTERA.
-  -- POR CONFIRMAR: hoy trunca a centavos (división entera, sin redondeo).
-  fee_miru_cents    bigint generated always as (((unit_price_cents * qty) * 5) / 100) stored
+  -- D-05: fee Miru 5 % por ítem, columna generada, aritmética ENTERA con
+  -- redondeo al centavo más cercano (mitad hacia arriba): (total * 5 + 50) / 100.
+  fee_miru_cents    bigint generated always as ((((unit_price_cents * qty) * 5) + 50) / 100) stored
 );
 
 comment on column public.order_items.fee_miru_cents is 'Fee Miru 5 % calculado por la BD. PROHIBIDO recalcularlo en la aplicación.';
