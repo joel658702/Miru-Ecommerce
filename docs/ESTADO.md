@@ -32,10 +32,13 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía             |
 | Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000) |
 | Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica              |
-| Datos reales en la UI              | `/pedidos` 4 órdenes, `/conexiones` Dropi (8 eventos hoy)           |
-| KPIs con regla del dueño           | ventas 3.000.000, fee 150.000, utilidad 85.005, fletes 0, tasa 50 % |
+| Datos reales en la UI              | `/pedidos` 6 órdenes, `/conexiones` Dropi (10 eventos hoy)          |
+| KPIs con regla del dueño           | ventas de todos los no cancelados; utilidad 85.005; fletes 0        |
 | API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                    |
-| Pruebas del proyecto               | **71** verdes (43 shared, 12 ingesta, 11 worker, 5 web)             |
+| Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401           |
+| Métricas diarias                   | Fila del día actualizada por el worker tras cada evento             |
+| Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido      |
+| Pruebas del proyecto               | **76** verdes (43 shared, 12 ingesta, 16 worker, 5 web)             |
 
 ## 2. Fases
 
@@ -52,7 +55,8 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | Ingesta de webhooks (`apps/ingest`)        | HMAC del body crudo, ±5 min, idempotencia, evento crudo persistido antes de procesar, ACK < 500 ms   | **Hecho** (19-nov-2026)          | Esquema    |
 | Worker de colas (`apps/worker`)            | BullMQ sobre Redis (`docker-compose.yml` ya lo define)                                               | **Hecho** (19-nov-2026)          | Ingesta    |
 | DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo             | **Hecho** (19-nov-2026)          | Esquema    |
-| Realtime + métricas (`P8b`, 3/3)           | Job que llena `dashboard_metrics_daily` y suscripción privada pausable                               | Pendiente                        | DataSource |
+| Realtime + métricas (`P8b`, 3/3)           | Worker llena `dashboard_metrics_daily`; el dashboard se suscribe y pausa con la pestaña oculta       | **Hecho** (19-nov-2026)          | DataSource |
+| Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                              | **Hecho** (19-nov-2026)          | Auth       |
 | Features (`P9`)                            | Rotación A/B/C, períodos en Finanzas, cambios de estado de garantías                                 | Pendiente                        | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
@@ -71,17 +75,19 @@ Decisiones del fee y de la utilidad:
 
 - **Fee (resuelto):** 5 % por ítem, redondeado al centavo más cercano con mitad hacia arriba, en
   aritmética entera: `((precio × cantidad) × 5 + 50) / 100`. Casos: 999c → 50; 10c → 1; 9c → 0.
+- **Ventas brutas y fee (regla del dueño, 19-nov-2026):** suman **todos los pedidos no
+  cancelados**; los entregados son los que reflejan la ganancia.
 - **Utilidad (regla del dueño, 19-nov-2026):** es el **5 % neto sobre la venta de los pedidos
   ENTREGADOS**; los **DEVUELTOS descuentan** su fee del saldo. Los **fletes no se cuentan**: los
   paga el dropshipper. Implementado en [`apps/web/src/server/aggregate.ts`](../apps/web/src/server/aggregate.ts)
-  con pruebas propias.
+  y replicado para las métricas diarias en [`apps/worker/src/metrics.ts`](../apps/worker/src/metrics.ts),
+  ambos con pruebas.
 - **Fuera de alcance:** el detalle de liquidación/cobro del fee a la plataforma (D-05) sigue
   diferido; aquí solo se calcula el saldo del panel.
 
 Secuencia siguiente (una fase por sesión):
 
-1. Job de métricas diarias (`dashboard_metrics_daily`) + Realtime en el dashboard, con pausa al
-   ocultar la pestaña.
+1. Features de `P9` (rotación A/B/C, períodos en Finanzas, cambios de estado de garantías).
 
 ## 4. Entorno local (notas reales de esta máquina)
 
@@ -100,10 +106,11 @@ Secuencia siguiente (una fase por sesión):
   (`docker compose up -d redis`) y arranca con `pnpm --filter @miru/ingest dev`. El transporte
   está documentado en [`integraciones/MIRU_V1_TRANSPORTE.md`](integraciones/MIRU_V1_TRANSPORTE.md).
 - **Worker**: usa el mismo `.env` y arranca con `pnpm --filter @miru/worker dev`. Consume la cola
-  `miru-webhooks` con **concurrencia 1** para que la regla de orden (D-07) no dependa de carreras;
-  se cierra con `Ctrl+C`.
+  `miru-webhooks` con **concurrencia 1** para que la regla de orden (D-07) no dependa de carreras,
+  y tras cada evento recalcula la fila del día en `dashboard_metrics_daily` (señal de Realtime).
+  Al arrancar deja las métricas del día listas.
 - **Datos de prueba locales** (base de desarrollo, no se commitean): tenant `Tienda Prueba`,
-  conexión Dropi activa, 4 pedidos (1 entregado, 1 devuelto, 2 pendientes) y 8 eventos procesados.
+  conexión Dropi activa, 6 pedidos (1 entregado, 1 devuelto, 4 pendientes) y 10 eventos procesados.
   Sirven para validar la WebApp mientras no haya tráfico real.
 - **CLI de Supabase**: el shim `C:\Users\joe\AppData\Roaming\npm\supabase.ps1` **se cuelga** al
   invocarlo (`supabase --version` no responde). Mientras se actualice el CLI (hay v3.x

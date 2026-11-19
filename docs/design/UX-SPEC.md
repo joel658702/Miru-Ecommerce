@@ -128,14 +128,14 @@ el cliente (D-05).
 
 ## 8. Deuda conocida
 
-| Tema           | Estado                          | Nota                                                     |
-| -------------- | ------------------------------- | -------------------------------------------------------- |
-| Intro de marca | 10 s de video, cierre a los 2 s | Decidir: alargar el temporizador o recortar el video     |
-| «hace 2 min»   | Texto fijo                      | Debe venir de la última sincronización real              |
-| Login          | Auth real (18-nov)              | Falta proteger rutas (RLS ya aplica en los datos)        |
-| Datos          | Reales vía `/api/data`          | Sustituido en P8b (19-nov-2026); sin sesión → 401        |
-| Realtime       | No implementado                 | Suscripción a `dashboard_metrics_daily` (siguiente fase) |
-| Fee Miru       | Calculado en BD                 | Se muestra tal cual llega; la app nunca lo recalcula     |
+| Tema           | Estado                          | Nota                                                                    |
+| -------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| Intro de marca | 10 s de video, cierre a los 2 s | Decidir: alargar el temporizador o recortar el video                    |
+| «hace 2 min»   | Texto fijo                      | Debe venir de la última sincronización real                             |
+| Login          | Auth real (18-nov)              | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión |
+| Datos          | Reales vía `/api/data`          | Sustituido en P8b (19-nov-2026); sin sesión → 401                       |
+| Realtime       | Implementado (19-nov)           | Suscripción a `dashboard_metrics_daily`, pausada con la pestaña oculta  |
+| Fee Miru       | Calculado en BD                 | Se muestra tal cual llega; la app nunca lo recalcula                    |
 
 ## 9. Criterios de aceptación sugeridos para P8b
 

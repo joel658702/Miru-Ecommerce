@@ -52,6 +52,7 @@ function weekdayLabel(date: Date): string {
 
 /**
  * Regla del dueño (19-nov-2026):
+ *  - Ventas brutas y fee: todos los pedidos NO cancelados.
  *  - La utilidad es el 5 % (fee Miru) sobre la venta de los pedidos ENTREGADOS.
  *  - Los DEVUELTOS descuentan del saldo (se resta su fee).
  *  - Los fletes NO se cuentan: los paga el dropshipper.
@@ -60,14 +61,21 @@ function weekdayLabel(date: Date): string {
  */
 export function computeTotals(orders: OrderFacts[]): Totals {
   let ventasBrutas = 0;
+  let feeMiru = 0;
   let feeEntregados = 0;
   let feeDevueltos = 0;
   let entregados = 0;
   let devueltos = 0;
 
   for (const order of orders) {
+    if (order.estado === "cancelado") {
+      continue;
+    }
+
+    ventasBrutas += order.subtotalCents;
+    feeMiru += order.feeMiruCents;
+
     if (order.estado === "entregado") {
-      ventasBrutas += order.subtotalCents;
       feeEntregados += order.feeMiruCents;
       entregados += 1;
     } else if (order.estado === "devuelto") {
@@ -80,7 +88,7 @@ export function computeTotals(orders: OrderFacts[]): Totals {
 
   return {
     ventasBrutasCents: ventasBrutas,
-    feeMiruCents: feeEntregados,
+    feeMiruCents: feeMiru,
     utilidadNetaCents: feeEntregados - feeDevueltos,
     costoFletesCents: 0,
     pedidosTotal: orders.length,
@@ -136,7 +144,7 @@ export function computeFinance(orders: OrderFacts[]): FinanceSummary {
     desglosePlataforma: PLATFORMS.map((plataforma) => {
       const ofPlatform = orders.filter((order) => order.plataforma === plataforma);
       const ventasCents = ofPlatform
-        .filter((order) => order.estado === "entregado")
+        .filter((order) => order.estado !== "cancelado")
         .reduce((sum, order) => sum + order.subtotalCents, 0);
 
       return { plataforma, ventasCents, fletesCents: 0, pedidos: ofPlatform.length };

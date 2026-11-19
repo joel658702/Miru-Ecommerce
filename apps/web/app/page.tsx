@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { dataSource } from "@/src/data";
+import { useDashboardRealtime } from "@/src/lib/supabase/use-dashboard-realtime";
 import type { DataSourceState, KpiSummary, OrderRecord } from "@/src/data/data-source";
 
 function DashboardContent() {
@@ -42,6 +43,11 @@ function DashboardContent() {
   useEffect(() => {
     loadData(stateParam);
   }, [stateParam]);
+
+  // Realtime sobre `dashboard_metrics_daily` (D-08): refresca al cambiar el día.
+  useDashboardRealtime(() => {
+    void loadData(stateParam);
+  });
 
   if (loading) {
     return (

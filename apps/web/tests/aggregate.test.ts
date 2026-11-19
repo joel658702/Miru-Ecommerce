@@ -16,18 +16,19 @@ function facts(overrides: Partial<OrderFacts> = {}): OrderFacts {
 }
 
 describe("computeTotals", () => {
-  it("solo los entregados suman ventas y fee; los devueltos descuentan", () => {
+  it("ventas y fee de todos los no cancelados; utilidad solo de entregados − devueltos", () => {
     const totals = computeTotals([
       facts(),
       facts({ estado: "devuelto", subtotalCents: 1_299_900, feeMiruCents: 64_995 }),
       facts({ estado: "pendiente", subtotalCents: 3_000_000, feeMiruCents: 150_000 }),
+      facts({ estado: "cancelado", subtotalCents: 999, feeMiruCents: 50 }),
     ]);
 
-    expect(totals.ventasBrutasCents).toBe(16_800_000);
-    expect(totals.feeMiruCents).toBe(840_000);
+    expect(totals.ventasBrutasCents).toBe(16_800_000 + 1_299_900 + 3_000_000);
+    expect(totals.feeMiruCents).toBe(840_000 + 64_995 + 150_000);
     expect(totals.utilidadNetaCents).toBe(840_000 - 64_995);
     expect(totals.costoFletesCents).toBe(0);
-    expect(totals.pedidosTotal).toBe(3);
+    expect(totals.pedidosTotal).toBe(4);
     expect(totals.entregados).toBe(1);
     expect(totals.devueltos).toBe(1);
     expect(totals.tasaEntregaEfectiva).toBe(50);
@@ -37,7 +38,7 @@ describe("computeTotals", () => {
     const totals = computeTotals([facts({ estado: "pendiente", feeMiruCents: 10 })]);
 
     expect(totals.tasaEntregaEfectiva).toBeNull();
-    expect(totals.ventasBrutasCents).toBe(0);
+    expect(totals.ventasBrutasCents).toBe(16_800_000);
     expect(totals.utilidadNetaCents).toBe(0);
   });
 });
@@ -73,18 +74,18 @@ describe("computeShare", () => {
 });
 
 describe("computeFinance", () => {
-  it("calcula el balance con la regla de entregados y sin fletes", () => {
+  it("muestra ventas y fee de todos los no cancelados, utilidad de entregados y sin fletes", () => {
     const finance = computeFinance([
       facts(),
       facts({ estado: "devuelto", feeMiruCents: 64_995, subtotalCents: 1_299_900 }),
     ]);
 
-    expect(finance.ventasBrutasCents).toBe(16_800_000);
-    expect(finance.feeMiruCents).toBe(840_000);
+    expect(finance.ventasBrutasCents).toBe(16_800_000 + 1_299_900);
+    expect(finance.feeMiruCents).toBe(840_000 + 64_995);
     expect(finance.utilidadNetaCents).toBe(775_005);
     expect(finance.costoFletesCents).toBe(0);
     expect(finance.desglosePlataforma).toEqual([
-      { plataforma: "Dropi", ventasCents: 16_800_000, fletesCents: 0, pedidos: 2 },
+      { plataforma: "Dropi", ventasCents: 18_099_900, fletesCents: 0, pedidos: 2 },
     ]);
   });
 });

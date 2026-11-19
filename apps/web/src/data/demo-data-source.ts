@@ -23,12 +23,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Camila Restrepo",
     telefono: "310 555 0142",
     ciudad: "Medellín",
-    departamento: "Antioquia",
     producto: "Lámpara Escritorio LED Recargable",
     unidades: 2,
     plataforma: "Dropi",
     transportadora: "Coordinadora",
-    metodoPago: "Contraentrega",
     valorTotalCents: 16800000, // $168.000 COP
     costoFleteCents: 1450000,  // $14.500 COP
     utilidadNetaCents: 6150000, // $61.500 COP (Estático, no calculado)
@@ -55,12 +53,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Andrés Mendoza",
     telefono: "320 555 0198",
     ciudad: "Bogotá D.C.",
-    departamento: "Cundinamarca",
     producto: "Organizador Modular Cocina 4 Niveles",
     unidades: 1,
     plataforma: "MasterShop",
     transportadora: "Servientrega",
-    metodoPago: "Contraentrega",
     valorTotalCents: 12990000, // $129.900 COP
     costoFleteCents: 1180000,  // $11.800 COP
     utilidadNetaCents: 4810000, // $48.100 COP (Estático)
@@ -87,12 +83,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Valentina Rojas",
     telefono: "315 555 0833",
     ciudad: "Cali",
-    departamento: "Valle del Cauca",
     producto: "Set Masajeador Percusión Portátil",
     unidades: 1,
     plataforma: "Effi",
     transportadora: "Interrapidísimo",
-    metodoPago: "Contraentrega",
     valorTotalCents: 18500000, // $185.000 COP
     costoFleteCents: 1620000,  // $16.200 COP
     utilidadNetaCents: 7200000, // $72.000 COP (Estático)
@@ -120,12 +114,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Juan Pablo Gómez",
     telefono: "301 555 0772",
     ciudad: "Barranquilla",
-    departamento: "Atlántico",
     producto: "Mini Proyector Cine en Casa Full HD",
     unidades: 1,
     plataforma: "Dropi",
     transportadora: "Envía",
-    metodoPago: "Anticipado",
     valorTotalCents: 34000000, // $340.000 COP
     costoFleteCents: 1850000,  // $18.500 COP
     utilidadNetaCents: 12800000, // $128.000 COP (Estático)
@@ -151,12 +143,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Daniela Castro",
     telefono: "317 555 0311",
     ciudad: "Bucaramanga",
-    departamento: "Santander",
     producto: "Dispensador Automático Mascotas Smart",
     unidades: 1,
     plataforma: "MasterShop",
     transportadora: "Servientrega",
-    metodoPago: "Contraentrega",
     valorTotalCents: 21500000, // $215.000 COP
     costoFleteCents: 1540000,  // $15.400 COP
     utilidadNetaCents: 8120000, // $81.200 COP (Estático)
@@ -181,12 +171,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Sebastián Beltrán",
     telefono: "311 555 0644",
     ciudad: "Pereira",
-    departamento: "Risaralda",
     producto: "Kit Pulido y Cuidado Automotriz",
     unidades: 1,
     plataforma: "Effi",
     transportadora: "Coordinadora",
-    metodoPago: "Contraentrega",
     valorTotalCents: 11000000, // $110.000 COP
     costoFleteCents: 1320000,  // $13.200 COP
     utilidadNetaCents: 3950000, // $39.500 COP (Estático)
@@ -214,12 +202,10 @@ export const DEMO_ORDERS: OrderRecord[] = [
     cliente: "Paola Andrea Cruz",
     telefono: "318 555 0955",
     ciudad: "Cartagena",
-    departamento: "Bolívar",
     producto: "Depiladora Láser IPL Doméstica",
     unidades: 1,
     plataforma: "Dropi",
     transportadora: "Interrapidísimo",
-    metodoPago: "Contraentrega",
     valorTotalCents: 24500000, // $245.000 COP
     costoFleteCents: 1780000,  // $17.800 COP
     utilidadNetaCents: 9600000, // $96.000 COP (Estático)
