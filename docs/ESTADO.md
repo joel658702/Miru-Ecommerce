@@ -9,37 +9,38 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 
 ## 1. Verificación ejecutada en esta fecha
 
-| Comprobación                       | Resultado                                                           |
-| ---------------------------------- | ------------------------------------------------------------------- |
-| `pnpm install --frozen-lockfile`   | OK                                                                  |
-| `pnpm typecheck`                   | OK (4 proyectos)                                                    |
-| `pnpm lint`                        | OK                                                                  |
-| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                               |
-| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                  |
-| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)            |
-| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                      |
-| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400    |
-| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina       |
-| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado  |
-| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000          |
-| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)            |
-| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado          |
-| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                  |
-| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)   |
-| Ingesta: duplicado                 | `200 duplicate`                                                     |
-| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión      |
-| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis        |
-| Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía             |
-| Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000) |
-| Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica              |
-| Datos reales en la UI              | `/pedidos` 6 órdenes, `/conexiones` Dropi (10 eventos hoy)          |
-| KPIs con regla del dueño           | ventas de todos los no cancelados; utilidad 85.005; fletes 0        |
-| API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                    |
-| Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401           |
-| Métricas diarias                   | Fila del día actualizada por el worker tras cada evento             |
-| Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido      |
-| Pruebas del proyecto               | **81** verdes (43 shared, 12 ingesta, 16 worker, 10 web)            |
-| Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727              |
+| Comprobación                       | Resultado                                                                         |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| `pnpm install --frozen-lockfile`   | OK                                                                                |
+| `pnpm typecheck`                   | OK (4 proyectos)                                                                  |
+| `pnpm lint`                        | OK                                                                                |
+| `pnpm test`                        | 43 pruebas verdes (`packages/shared`)                                             |
+| `pnpm build`                       | OK — 9 rutas estáticas + `ƒ Proxy`                                                |
+| `pnpm dev`                         | web `:3000` (200), ingest `:3001/health` (`{"ok":true}`)                          |
+| Supabase local                     | API `:54321` arriba, GoTrue `v2.192.0` healthy                                    |
+| Login vía API de Auth              | `grant_type=password` → 200 con `access_token`; clave mala → 400                  |
+| Login en navegador (Edge headless) | Entra a `/`, escribe la cookie de sesión y «Salir» la elimina                     |
+| `supabase db reset`                | Aplica `0001_init.sql`: 9 tablas, RLS en todas, Realtime publicado                |
+| Fee Miru en BD                     | 2 × 8.400.000 + 999 → fee 840.050; al borrar uno → 840.000                        |
+| Redondeo del fee                   | 9c→0, 10c→1, 99c→5, 999c→50 (mitad hacia arriba, entero)                          |
+| Idempotencia de webhooks           | Duplicado `(connection_id, external_event_id)` → rechazado                        |
+| RLS                                | `authenticated` sin membresía → 0 pedidos visibles                                |
+| Ingesta: evento válido             | `200 accepted` en **38 ms** en caliente (630 ms en arranque frío)                 |
+| Ingesta: duplicado                 | `200 duplicate`                                                                   |
+| Ingesta: rechazos                  | `401` firma / `401` timestamp / `422` payload / `404` conexión                    |
+| Ingesta: persistencia y cola       | 4 filas en `webhook_events` (sin procesar) + 4 jobs en Redis                      |
+| Worker: 4 eventos pendientes       | 4 pedidos creados; fee 840.000 y 3 × 64.995, cola vacía                           |
+| Worker: orden D-07                 | evento viejo → `stale`; evento nuevo → aplicado (3.000.000/150.000)               |
+| Worker: idempotencia               | evento ya procesado → `already-processed`, no reaplica                            |
+| Datos reales en la UI              | `/pedidos` 6 órdenes, `/conexiones` Dropi (10 eventos hoy)                        |
+| KPIs con regla del dueño           | ventas de todos los no cancelados; utilidad 85.005; fletes 0                      |
+| API de datos                       | `/api/data/*` 200 con sesión; **401** sin cookie                                  |
+| Protección de rutas                | `/` sin sesión → **307** a `/login`; API sin cookie → 401                         |
+| Métricas diarias                   | Fila del día actualizada por el worker tras cada evento                           |
+| Realtime en el dashboard           | Sin recargar: ventas $78.997 → **$98.997** al entrar un pedido                    |
+| Pruebas del proyecto               | **87** verdes (43 shared, 12 ingesta, 16 worker, 16 web)                          |
+| Período en Finanzas                | Hoy $458.967 · 7 días $3.032.737 · 30 días $13.751.727                            |
+| Garantías con cambio de estado     | PATCH 200 y persistido; transición inválida → **409**; rechazo sin nota → **422** |
 
 ## 2. Fases
 
@@ -58,7 +59,7 @@ nombra por frente para no inventar una numeración que el dueño no ha fijado.
 | DataSource real (`P8b`, 2/3)               | `/api/data/*` con sesión y RLS, seis pantallas con datos reales, badge DEMO solo en demo             | **Hecho** (19-nov-2026)          | Esquema    |
 | Realtime + métricas (`P8b`, 3/3)           | Worker llena `dashboard_metrics_daily`; el dashboard se suscribe y pausa con la pestaña oculta       | **Hecho** (19-nov-2026)          | DataSource |
 | Protección de rutas                        | `proxy.ts` redirige a `/login` sin sesión y saca de `/login` con sesión                              | **Hecho** (19-nov-2026)          | Auth       |
-| Features (`P9`)                            | Período en Finanzas (hecho); rotación A/B/C y cambios de estado de garantías (pendiente)             | **Parcial** (19-nov-2026)        | DataSource |
+| Features (`P9`)                            | Período en Finanzas y cambio de estado de garantías (hechos); rotación A/B/C (pendiente)             | **Parcial** (19-nov-2026)        | DataSource |
 | Fee en devoluciones                        | Regla de cobro del 5 % en devoluciones/cancelaciones                                                 | **Diferido por el dueño**        | —          |
 
 ## 3. Esquema de base de datos

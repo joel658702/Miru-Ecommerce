@@ -2,11 +2,13 @@ import type {
   ConnectionRecord,
   DataSource,
   DataSourceState,
+  FinancePeriod,
   FinanceSummary,
   KpiSummary,
   OrderRecord,
   ProductRecord,
   WarrantyRecord,
+  WarrantyStatus,
 } from "./data-source";
 
 /**
@@ -28,7 +30,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "Dropi",
     transportadora: "Coordinadora",
     valorTotalCents: 16800000, // $168.000 COP
-    costoFleteCents: 1450000,  // $14.500 COP
+    costoFleteCents: 1450000, // $14.500 COP
     utilidadNetaCents: 6150000, // $61.500 COP (Estático, no calculado)
     estado: "en_transito",
     fechaCreacion: "2026-11-13T11:20:00-05:00",
@@ -41,9 +43,21 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "13 nov · 11:20", titulo: "Pedido sincronizado desde Dropi", ubicacion: "Bogotá D.C." },
-      { timestamp: "13 nov · 13:05", titulo: "Despachado en bodega central", ubicacion: "Funza, Cundinamarca" },
-      { timestamp: "13 nov · 16:40", titulo: "En ruta hacia centro de distribución", ubicacion: "Medellín, Antioquia" },
+      {
+        timestamp: "13 nov · 11:20",
+        titulo: "Pedido sincronizado desde Dropi",
+        ubicacion: "Bogotá D.C.",
+      },
+      {
+        timestamp: "13 nov · 13:05",
+        titulo: "Despachado en bodega central",
+        ubicacion: "Funza, Cundinamarca",
+      },
+      {
+        timestamp: "13 nov · 16:40",
+        titulo: "En ruta hacia centro de distribución",
+        ubicacion: "Medellín, Antioquia",
+      },
     ],
   },
   {
@@ -58,7 +72,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "MasterShop",
     transportadora: "Servientrega",
     valorTotalCents: 12990000, // $129.900 COP
-    costoFleteCents: 1180000,  // $11.800 COP
+    costoFleteCents: 1180000, // $11.800 COP
     utilidadNetaCents: 4810000, // $48.100 COP (Estático)
     estado: "entregado",
     fechaCreacion: "2026-11-12T09:45:00-05:00",
@@ -71,8 +85,16 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "12 nov · 09:45", titulo: "Pedido creado en MasterShop", ubicacion: "Bogotá D.C." },
-      { timestamp: "12 nov · 14:10", titulo: "En camino al destino final", ubicacion: "Bogotá D.C." },
+      {
+        timestamp: "12 nov · 09:45",
+        titulo: "Pedido creado en MasterShop",
+        ubicacion: "Bogotá D.C.",
+      },
+      {
+        timestamp: "12 nov · 14:10",
+        titulo: "En camino al destino final",
+        ubicacion: "Bogotá D.C.",
+      },
       { timestamp: "13 nov · 10:15", titulo: "Entregado a satisfacción", ubicacion: "Bogotá D.C." },
     ],
   },
@@ -88,11 +110,12 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "Effi",
     transportadora: "Interrapidísimo",
     valorTotalCents: 18500000, // $185.000 COP
-    costoFleteCents: 1620000,  // $16.200 COP
+    costoFleteCents: 1620000, // $16.200 COP
     utilidadNetaCents: 7200000, // $72.000 COP (Estático)
     estado: "novedad",
     fechaCreacion: "2026-11-13T08:15:00-05:00",
-    novedadDetalle: "Dirección incompleta según la transportadora. Cliente pendiente de confirmar datos de nomenclatura.",
+    novedadDetalle:
+      "Dirección incompleta según la transportadora. Cliente pendiente de confirmar datos de nomenclatura.",
     items: [
       {
         sku: "MAS-PORT-01",
@@ -102,9 +125,21 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "13 nov · 08:15", titulo: "Orden recibida vía webhook Effi", ubicacion: "Cali, Valle" },
-      { timestamp: "13 nov · 11:50", titulo: "Primer intento de entrega fallido", ubicacion: "Cali, Valle" },
-      { timestamp: "13 nov · 14:00", titulo: "Novedad registrada: nomenclatura incompleta", ubicacion: "Cali, Valle" },
+      {
+        timestamp: "13 nov · 08:15",
+        titulo: "Orden recibida vía webhook Effi",
+        ubicacion: "Cali, Valle",
+      },
+      {
+        timestamp: "13 nov · 11:50",
+        titulo: "Primer intento de entrega fallido",
+        ubicacion: "Cali, Valle",
+      },
+      {
+        timestamp: "13 nov · 14:00",
+        titulo: "Novedad registrada: nomenclatura incompleta",
+        ubicacion: "Cali, Valle",
+      },
     ],
   },
   {
@@ -119,7 +154,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "Dropi",
     transportadora: "Envía",
     valorTotalCents: 34000000, // $340.000 COP
-    costoFleteCents: 1850000,  // $18.500 COP
+    costoFleteCents: 1850000, // $18.500 COP
     utilidadNetaCents: 12800000, // $128.000 COP (Estático)
     estado: "confirmado",
     fechaCreacion: "2026-11-13T14:30:00-05:00",
@@ -132,8 +167,16 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "13 nov · 14:30", titulo: "Pago anticipado validado", ubicacion: "Barranquilla, Atlántico" },
-      { timestamp: "13 nov · 15:10", titulo: "Rotulado e ingresado a zona de empaque", ubicacion: "Barranquilla, Atlántico" },
+      {
+        timestamp: "13 nov · 14:30",
+        titulo: "Pago anticipado validado",
+        ubicacion: "Barranquilla, Atlántico",
+      },
+      {
+        timestamp: "13 nov · 15:10",
+        titulo: "Rotulado e ingresado a zona de empaque",
+        ubicacion: "Barranquilla, Atlántico",
+      },
     ],
   },
   {
@@ -148,7 +191,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "MasterShop",
     transportadora: "Servientrega",
     valorTotalCents: 21500000, // $215.000 COP
-    costoFleteCents: 1540000,  // $15.400 COP
+    costoFleteCents: 1540000, // $15.400 COP
     utilidadNetaCents: 8120000, // $81.200 COP (Estático)
     estado: "pendiente",
     fechaCreacion: "2026-11-13T15:05:00-05:00",
@@ -161,7 +204,11 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "13 nov · 15:05", titulo: "Pedido registrado por el cliente", ubicacion: "Bucaramanga, Santander" },
+      {
+        timestamp: "13 nov · 15:05",
+        titulo: "Pedido registrado por el cliente",
+        ubicacion: "Bucaramanga, Santander",
+      },
     ],
   },
   {
@@ -176,7 +223,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "Effi",
     transportadora: "Coordinadora",
     valorTotalCents: 11000000, // $110.000 COP
-    costoFleteCents: 1320000,  // $13.200 COP
+    costoFleteCents: 1320000, // $13.200 COP
     utilidadNetaCents: 3950000, // $39.500 COP (Estático)
     estado: "devuelto",
     fechaCreacion: "2026-11-10T10:00:00-05:00",
@@ -190,9 +237,21 @@ export const DEMO_ORDERS: OrderRecord[] = [
       },
     ],
     historial: [
-      { timestamp: "10 nov · 10:00", titulo: "Despacho creado en Effi", ubicacion: "Pereira, Risaralda" },
-      { timestamp: "12 nov · 15:40", titulo: "Cliente rechaza el paquete", ubicacion: "Pereira, Risaralda" },
-      { timestamp: "13 nov · 09:20", titulo: "En proceso de retorno a origen", ubicacion: "Pereira, Risaralda" },
+      {
+        timestamp: "10 nov · 10:00",
+        titulo: "Despacho creado en Effi",
+        ubicacion: "Pereira, Risaralda",
+      },
+      {
+        timestamp: "12 nov · 15:40",
+        titulo: "Cliente rechaza el paquete",
+        ubicacion: "Pereira, Risaralda",
+      },
+      {
+        timestamp: "13 nov · 09:20",
+        titulo: "En proceso de retorno a origen",
+        ubicacion: "Pereira, Risaralda",
+      },
     ],
   },
   {
@@ -207,7 +266,7 @@ export const DEMO_ORDERS: OrderRecord[] = [
     plataforma: "Dropi",
     transportadora: "Interrapidísimo",
     valorTotalCents: 24500000, // $245.000 COP
-    costoFleteCents: 1780000,  // $17.800 COP
+    costoFleteCents: 1780000, // $17.800 COP
     utilidadNetaCents: 9600000, // $96.000 COP (Estático)
     estado: "cancelado",
     fechaCreacion: "2026-11-11T12:00:00-05:00",
@@ -222,7 +281,11 @@ export const DEMO_ORDERS: OrderRecord[] = [
     ],
     historial: [
       { timestamp: "11 nov · 12:00", titulo: "Orden registrada", ubicacion: "Cartagena, Bolívar" },
-      { timestamp: "11 nov · 12:45", titulo: "Cancelación solicitada por usuario", ubicacion: "Cartagena, Bolívar" },
+      {
+        timestamp: "11 nov · 12:45",
+        titulo: "Cancelación solicitada por usuario",
+        ubicacion: "Cartagena, Bolívar",
+      },
     ],
   },
 ];
@@ -385,14 +448,14 @@ export const DEMO_CONNECTIONS: ConnectionRecord[] = [
 
 export const DEMO_KPIS: KpiSummary = {
   ventasBrutasCents: 428900000, // $4.289.000 COP
-  feeMiruCents: null,           // OBLIGATORIO: null en demo, se muestra como "—"
-  costoFletesCents: 38240000,   // $382.400 COP
+  feeMiruCents: null, // OBLIGATORIO: null en demo, se muestra como "—"
+  costoFletesCents: 38240000, // $382.400 COP
   utilidadNetaCents: 184210000, // $1.842.100 COP (Sin palabra "estimada")
   pedidosTotal: 142,
   entregados: 118,
   devueltos: 9,
   garantiasAbiertas: 5,
-  tasaEntregaEfectiva: null,    // OBLIGATORIO: null en demo, se muestra como "—"
+  tasaEntregaEfectiva: null, // OBLIGATORIO: null en demo, se muestra como "—"
   despachosVsEntregados7d: [
     { dia: "Lun", despachados: 18, entregados: 15 },
     { dia: "Mar", despachados: 22, entregados: 19 },
@@ -476,7 +539,10 @@ export class DemoDataSource implements DataSource {
     return DEMO_PRODUCTS;
   }
 
-  async getFinanceSummary(state?: DataSourceState): Promise<FinanceSummary> {
+  async getFinanceSummary(
+    state?: DataSourceState,
+    _period: FinancePeriod = "mes",
+  ): Promise<FinanceSummary> {
     handleStateCheck(state);
     if (state === "empty") {
       return {
@@ -496,6 +562,33 @@ export class DemoDataSource implements DataSource {
       return [];
     }
     return DEMO_CONNECTIONS;
+  }
+
+  /** En modo demo el cambio se aplica en memoria (se pierde al recargar). */
+  async updateWarrantyStatus(
+    id: string,
+    estado: WarrantyStatus,
+    nota?: string,
+  ): Promise<WarrantyRecord> {
+    const index = DEMO_WARRANTIES.findIndex((item) => item.id === id);
+    if (index === -1) {
+      throw new Error("Caso de garantía no encontrado.");
+    }
+
+    const current = DEMO_WARRANTIES[index];
+    if (current === undefined) {
+      throw new Error("Caso de garantía no encontrado.");
+    }
+
+    const updated: WarrantyRecord = {
+      ...current,
+      estado,
+      resolucionNota:
+        nota !== undefined && nota.trim().length > 0 ? nota.trim() : current.resolucionNota,
+    };
+
+    DEMO_WARRANTIES[index] = updated;
+    return updated;
   }
 }
 

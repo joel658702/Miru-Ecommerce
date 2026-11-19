@@ -55,7 +55,9 @@ el cliente (D-05).
 - Tablero por estado (solicitada → en revisión → aprobada/rechazada → reembolsada) con
   `KanbanCard`.
 - Panel de detalle con monto solicitado, motivo y resolución.
-- **P9**: los cambios de estado reales (con RLS de operador) llegan cuando exista backend.
+- **Cambio de estado implementado (P9)**: botones con las transiciones válidas del flujo,
+  nota de resolución (obligatoria al rechazar) y guardado contra la API con RLS. `rechazada` y
+  `reembolsada` son terminales. No se calcula ni cobra fee por estos cambios (regla diferida).
 
 ### 3.4 Productos `/productos`
 

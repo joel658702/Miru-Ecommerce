@@ -8,6 +8,7 @@ import type {
   OrderRecord,
   ProductRecord,
   WarrantyRecord,
+  WarrantyStatus,
 } from "./data-source";
 
 const EMPTY_KPIS: KpiSummary = {
@@ -96,6 +97,37 @@ export class ApiDataSource implements DataSource {
   async getConnections(state?: DataSourceState): Promise<ConnectionRecord[]> {
     if (ApiDataSource.checkState(state)) return [];
     return this.request<ConnectionRecord[]>("connections");
+  }
+
+  async updateWarrantyStatus(
+    id: string,
+    estado: WarrantyStatus,
+    nota?: string,
+  ): Promise<WarrantyRecord> {
+    const response = await fetch(`/api/data/warranties/${id}`, {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ estado, nota }),
+    });
+
+    if (!response.ok) {
+      const detail = (await response.json().catch(() => null)) as { error?: string } | null;
+
+      if (response.status === 409) {
+        throw new Error("Ese cambio de estado no es válido para el caso actual.");
+      }
+      if (detail?.error === "note_required") {
+        throw new Error("Para rechazar un caso debes escribir el motivo.");
+      }
+      if (response.status === 401) {
+        throw new Error("Tu sesión expiró. Vuelve a iniciar sesión.");
+      }
+
+      throw new Error("No se pudo actualizar el caso. Intenta de nuevo.");
+    }
+
+    return (await response.json()) as WarrantyRecord;
   }
 }
 

@@ -23,6 +23,9 @@ dumps/
 pnpm-debug.log*
 .DS_Store
 Thumbs.db
+# Temporales de verificación de agentes
+.tmp-*
+*-check.txt
 
 # Supabase CLI
 supabase/.branches/

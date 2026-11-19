@@ -10,7 +10,13 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { FilterBar } from "@/components/ui/FilterBar";
 import { Toast, type ToastItem } from "@/components/ui/Toast";
 import { dataSource } from "@/src/data";
-import type { DataSourceState, Plataforma, WarrantyRecord } from "@/src/data/data-source";
+import { nextWarrantyStatuses, requiresResolutionNote } from "@/src/server/warranty-transitions";
+import type {
+  DataSourceState,
+  Plataforma,
+  WarrantyRecord,
+  WarrantyStatus,
+} from "@/src/data/data-source";
 
 const WARRANTY_STATUS_OPTIONS = [
   { value: "solicitada", label: "Solicitada" },
@@ -34,8 +40,15 @@ function GarantiasContent() {
   const [selectedWarranty, setSelectedWarranty] = useState<WarrantyRecord | null>(null);
 
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [nextStatus, setNextStatus] = useState<WarrantyStatus | "">("");
+  const [nota, setNota] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const addToast = (titulo: string, descripcion?: string, tone?: "success" | "info" | "warning" | "danger") => {
+  const addToast = (
+    titulo: string,
+    descripcion?: string,
+    tone?: "success" | "info" | "warning" | "danger",
+  ) => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, titulo, descripcion, tone }]);
     setTimeout(() => {
@@ -99,23 +112,61 @@ function GarantiasContent() {
     setSelectedStatus("todos");
   };
 
+  const statusLabel = (status: WarrantyStatus): string =>
+    WARRANTY_STATUS_OPTIONS.find((option) => option.value === status)?.label ?? status;
+
+  const openWarranty = (warranty: WarrantyRecord) => {
+    setSelectedWarranty(warranty);
+    setNextStatus("");
+    setNota("");
+  };
+
+  const handleSaveStatus = async () => {
+    if (selectedWarranty === null || nextStatus === "") {
+      return;
+    }
+
+    if (requiresResolutionNote(nextStatus) && nota.trim().length < 3) {
+      addToast(
+        "Falta el motivo",
+        "Para rechazar un caso escribe al menos 3 caracteres.",
+        "warning",
+      );
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const updated = await dataSource.updateWarrantyStatus(selectedWarranty.id, nextStatus, nota);
+      setWarranties((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+      setSelectedWarranty(updated);
+      setNextStatus("");
+      setNota("");
+      addToast("Caso actualizado", `Ahora está en «${statusLabel(updated.estado)}».`, "success");
+    } catch (err) {
+      addToast(
+        "No se pudo actualizar",
+        err instanceof Error ? err.message : "Intenta de nuevo.",
+        "danger",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const columns: Column<WarrantyRecord>[] = [
     {
       key: "id",
       header: "Caso",
       render: (w) => (
-        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">
-          {w.id}
-        </span>
+        <span className="font-mono text-xs font-bold text-[var(--color-neutral-900)]">{w.id}</span>
       ),
     },
     {
       key: "pedidoId",
       header: "Pedido Relacionado",
       render: (w) => (
-        <span className="font-mono text-xs text-[var(--color-primary)]">
-          {w.pedidoId}
-        </span>
+        <span className="font-mono text-xs text-[var(--color-primary)]">{w.pedidoId}</span>
       ),
     },
     {
@@ -160,7 +211,10 @@ function GarantiasContent() {
 
   return (
     <div className="space-y-5">
-      <Toast toasts={toasts} onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))} />
+      <Toast
+        toasts={toasts}
+        onDismiss={(id) => setToasts((prev) => prev.filter((t) => t.id !== id))}
+      />
 
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -187,7 +241,9 @@ function GarantiasContent() {
             onChangeStatus={setSelectedStatus}
             statusOptions={WARRANTY_STATUS_OPTIONS}
             onClear={handleClearFilters}
-            hasActiveFilters={selectedPlatforms.length > 0 || selectedStatus !== "todos" || search.length > 0}
+            hasActiveFilters={
+              selectedPlatforms.length > 0 || selectedStatus !== "todos" || search.length > 0
+            }
           />
         </div>
       </div>
@@ -196,8 +252,10 @@ function GarantiasContent() {
         columns={columns}
         rows={filteredWarranties}
         keyExtractor={(w) => w.id}
-        state={loading ? "loading" : error ? "error" : filteredWarranties.length === 0 ? "empty" : "data"}
-        onSelectRow={(w) => setSelectedWarranty(w)}
+        state={
+          loading ? "loading" : error ? "error" : filteredWarranties.length === 0 ? "empty" : "data"
+        }
+        onSelectRow={(w) => openWarranty(w)}
         onRetry={() => loadWarranties("data")}
         emptyTitle="Sin garantías para mostrar"
         emptyDescription="No se encontraron casos de garantía con los filtros seleccionados."
@@ -233,7 +291,12 @@ function GarantiasContent() {
                 className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--color-neutral-500)] hover:bg-[var(--color-neutral-100)] cursor-pointer"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -262,11 +325,15 @@ function GarantiasContent() {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-xs font-semibold text-[var(--color-neutral-500)]">Producto</p>
-                  <p className="mt-0.5 font-medium text-[var(--color-neutral-900)]">{selectedWarranty.producto}</p>
+                  <p className="mt-0.5 font-medium text-[var(--color-neutral-900)]">
+                    {selectedWarranty.producto}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-semibold text-[var(--color-neutral-500)]">Motivo reportado por el comprador</p>
+                  <p className="text-xs font-semibold text-[var(--color-neutral-500)]">
+                    Motivo reportado por el comprador
+                  </p>
                   <p className="mt-1 text-xs text-[var(--color-neutral-700)] bg-[var(--color-surface-canvas)] p-3 rounded-lg border border-[var(--color-border-subtle)] leading-relaxed">
                     {selectedWarranty.motivo}
                   </p>
@@ -274,13 +341,68 @@ function GarantiasContent() {
 
                 {selectedWarranty.resolucionNota && (
                   <div>
-                    <p className="text-xs font-semibold text-[var(--color-neutral-500)]">Nota de resolución operativa</p>
+                    <p className="text-xs font-semibold text-[var(--color-neutral-500)]">
+                      Nota de resolución operativa
+                    </p>
                     <p className="mt-1 text-xs text-[var(--color-neutral-700)] bg-[var(--color-surface-canvas)] p-3 rounded-lg border border-[var(--color-border-subtle)] leading-relaxed">
                       {selectedWarranty.resolucionNota}
                     </p>
                   </div>
                 )}
               </div>
+
+              {nextWarrantyStatuses(selectedWarranty.estado).length > 0 ? (
+                <div className="space-y-3 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-surface-canvas)] p-4">
+                  <p className="text-xs font-semibold text-[var(--color-neutral-700)]">
+                    Cambiar estado del caso
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {nextWarrantyStatuses(selectedWarranty.estado).map((status) => {
+                      const active = nextStatus === status;
+                      return (
+                        <button
+                          key={status}
+                          type="button"
+                          onClick={() => setNextStatus(status)}
+                          aria-pressed={active}
+                          className={`min-h-[36px] rounded-lg border px-3 py-1 text-xs font-semibold transition-colors cursor-pointer ${
+                            active
+                              ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
+                              : "border-[var(--color-border-interactive)] bg-[var(--color-surface-card)] text-[var(--color-neutral-700)] hover:bg-[var(--color-neutral-100)]"
+                          }`}
+                        >
+                          {statusLabel(status)}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {nextStatus !== "" && (
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="warranty-note"
+                        className="block text-xs font-semibold text-[var(--color-neutral-600)]"
+                      >
+                        Nota de resolución{" "}
+                        {requiresResolutionNote(nextStatus) ? "(obligatoria)" : "(opcional)"}
+                      </label>
+                      <textarea
+                        id="warranty-note"
+                        value={nota}
+                        onChange={(event) => setNota(event.target.value)}
+                        rows={3}
+                        placeholder="Detalle de la gestión realizada..."
+                        className="w-full rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface-card)] px-3 py-2 text-xs text-[var(--color-neutral-900)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-cyan)]/30"
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-[var(--color-neutral-500)]">
+                  Caso cerrado: ya no admite cambios de estado.
+                </p>
+              )}
             </div>
 
             <div className="border-t border-[var(--color-border-subtle)] p-4 flex items-center justify-end gap-2.5 bg-[var(--color-surface-canvas)]">
@@ -291,15 +413,20 @@ function GarantiasContent() {
               >
                 Cerrar
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  addToast("Caso actualizado", `Caso ${selectedWarranty.id} marcado como revisado.`, "info");
-                }}
-                className="min-h-[44px] rounded-lg bg-[var(--color-neutral-900)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--color-neutral-800)] cursor-pointer"
-              >
-                Actualizar gestión
-              </button>
+              {nextWarrantyStatuses(selectedWarranty.estado).length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleSaveStatus}
+                  disabled={nextStatus === "" || saving}
+                  className={`min-h-[44px] rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors ${
+                    nextStatus === "" || saving
+                      ? "bg-[var(--color-neutral-300)] text-[var(--color-neutral-500)] cursor-not-allowed"
+                      : "bg-[var(--color-neutral-900)] hover:bg-[var(--color-neutral-800)] cursor-pointer"
+                  }`}
+                >
+                  {saving ? "Guardando…" : "Guardar cambio"}
+                </button>
+              )}
             </div>
           </aside>
         </div>
@@ -311,7 +438,11 @@ function GarantiasContent() {
 export default function GarantiasPage() {
   return (
     <AppShell title="Garantías">
-      <Suspense fallback={<div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />}>
+      <Suspense
+        fallback={
+          <div className="h-64 rounded-xl border border-[var(--color-border-subtle)] animate-pulse" />
+        }
+      >
         <GarantiasContent />
       </Suspense>
     </AppShell>

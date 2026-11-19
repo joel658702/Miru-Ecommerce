@@ -1,5 +1,7 @@
 import type { OrderStatus, WarrantyStatus } from "@miru/shared";
 
+export type { OrderStatus, WarrantyStatus } from "@miru/shared";
+
 export type Plataforma = "Dropi" | "MasterShop" | "Effi";
 
 export type DataSourceState = "data" | "empty" | "loading" | "error";
@@ -137,4 +139,6 @@ export interface DataSource {
   getProducts(state?: DataSourceState): Promise<ProductRecord[]>;
   getFinanceSummary(state?: DataSourceState, period?: FinancePeriod): Promise<FinanceSummary>;
   getConnections(state?: DataSourceState): Promise<ConnectionRecord[]>;
+  /** Cambia el estado de una garantía (el flujo válido lo valida el servidor). */
+  updateWarrantyStatus(id: string, estado: WarrantyStatus, nota?: string): Promise<WarrantyRecord>;
 }

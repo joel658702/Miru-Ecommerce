@@ -248,68 +248,114 @@ export async function loadProducts(ctx: DataContext): Promise<ProductRecord[]> {
   }));
 }
 
+const WARRANTY_SELECT = [
+  "id",
+  "order_id",
+  "motivo",
+  "monto_solicitado_cents",
+  "estado",
+  "fecha_solicitud",
+  "resolucion_nota",
+  "orders(customer_name, customer_phone, customer_city, external_id, connections(plataforma), order_items(sku))",
+].join(", ");
+
+interface WarrantyRow {
+  id: string;
+  order_id: string;
+  motivo: string;
+  monto_solicitado_cents: number;
+  estado: WarrantyStatus;
+  fecha_solicitud: string;
+  resolucion_nota: string | null;
+  orders: {
+    customer_name: string;
+    customer_phone: string;
+    customer_city: string;
+    external_id: string;
+    connections: { plataforma: Plataforma } | null;
+    order_items: { sku: string }[] | null;
+  } | null;
+}
+
+function mapWarranty(row: WarrantyRow): WarrantyRecord {
+  const order = row.orders;
+  const plataforma = order?.connections?.plataforma;
+
+  if (plataforma === undefined) {
+    throw new Error(`La garantía ${row.id} no tiene conexión asociada.`);
+  }
+
+  return {
+    id: row.id,
+    pedidoId: order?.external_id ?? row.order_id,
+    cliente: order?.customer_name ?? "—",
+    telefono: order?.customer_phone ?? "—",
+    ciudad: order?.customer_city ?? "—",
+    producto: order?.order_items?.[0]?.sku ?? "—",
+    plataforma,
+    montoSolicitadoCents: row.monto_solicitado_cents,
+    motivo: row.motivo,
+    estado: row.estado,
+    fechaSolicitud: row.fecha_solicitud,
+    resolucionNota: row.resolucion_nota ?? undefined,
+  };
+}
+
 export async function loadWarranties(ctx: DataContext): Promise<WarrantyRecord[]> {
   const { data, error } = await ctx.client
     .from("warranties")
-    .select(
-      [
-        "id",
-        "order_id",
-        "motivo",
-        "monto_solicitado_cents",
-        "estado",
-        "fecha_solicitud",
-        "resolucion_nota",
-        "orders(customer_name, customer_phone, customer_city, external_id, connections(plataforma), order_items(sku))",
-      ].join(", "),
-    )
+    .select(WARRANTY_SELECT)
     .order("fecha_solicitud", { ascending: false });
 
   if (error !== null) {
     throw error;
   }
 
-  type WarrantyRow = {
-    id: string;
-    order_id: string;
-    motivo: string;
-    monto_solicitado_cents: number;
-    estado: WarrantyStatus;
-    fecha_solicitud: string;
-    resolucion_nota: string | null;
-    orders: {
-      customer_name: string;
-      customer_phone: string;
-      customer_city: string;
-      external_id: string;
-      connections: { plataforma: Plataforma } | null;
-      order_items: { sku: string }[] | null;
-    } | null;
-  };
+  return ((data ?? []) as unknown as WarrantyRow[]).map(mapWarranty);
+}
 
-  return ((data ?? []) as unknown as WarrantyRow[]).map((row) => {
-    const order = row.orders;
-    const plataforma = order?.connections?.plataforma;
+/** Lee una garantía con la sesión del operador (RLS aplica). */
+export async function getWarranty(ctx: DataContext, id: string): Promise<WarrantyRecord | null> {
+  const { data, error } = await ctx.client
+    .from("warranties")
+    .select(WARRANTY_SELECT)
+    .eq("id", id)
+    .maybeSingle<WarrantyRow>();
 
-    if (plataforma === undefined) {
-      throw new Error(`La garantía ${row.id} no tiene conexión asociada.`);
-    }
+  if (error !== null) {
+    throw error;
+  }
 
-    return {
-      id: row.id,
-      pedidoId: order?.external_id ?? row.order_id,
-      cliente: order?.customer_name ?? "—",
-      telefono: order?.customer_phone ?? "—",
-      ciudad: order?.customer_city ?? "—",
-      producto: order?.order_items?.[0]?.sku ?? "—",
-      plataforma,
-      montoSolicitadoCents: row.monto_solicitado_cents,
-      motivo: row.motivo,
-      estado: row.estado,
-      fechaSolicitud: row.fecha_solicitud,
-      resolucionNota: row.resolucion_nota ?? undefined,
-    };
-  });
+  return data === null ? null : mapWarranty(data);
+}
+
+/**
+ * Actualiza estado y nota de una garantía. Las transiciones válidas se validan
+ * en la ruta antes de llamar aquí; la base aplica RLS por tenant.
+ */
+export async function updateWarranty(
+  ctx: DataContext,
+  id: string,
+  estado: WarrantyStatus,
+  nota?: string,
+): Promise<WarrantyRecord | null> {
+  const patch: Record<string, unknown> = { estado };
+  if (nota !== undefined && nota.trim().length > 0) {
+    patch.resolucion_nota = nota.trim();
+  }
+
+  const { data, error } = await ctx.client
+    .from("warranties")
+    .update(patch)
+    .eq("id", id)
+    .select(WARRANTY_SELECT)
+    .maybeSingle<WarrantyRow>();
+
+  if (error !== null) {
+    throw error;
+  }
+
+  return data === null ? null : mapWarranty(data);
 }
 
 export async function loadConnections(ctx: DataContext): Promise<ConnectionRecord[]> {
