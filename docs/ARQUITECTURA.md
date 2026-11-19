@@ -73,6 +73,10 @@ El resto del esquema permanece idéntico. El trigger trg_owner no cambia.
 El SQL aprobado lo pega el humano en supabase/migrations/0001_init.sql, aplicando la enmienda
 E-01. Ningún agente lo reescribe.
 
+**Excepción registrada (18-nov-2026):** el dueño autorizó al agente a **redactar** el esquema
+como borrador; el archivo queda pendiente de su aprobación final antes de aplicarse fuera del
+entorno local. El detalle y las decisiones abiertas están en [`ESTADO.md`](ESTADO.md#3-esquema-de-base-de-datos-excepción-puntual-a-d-06).
+
 ## 9. Estado actual de la WebApp (demo)
 
 Registro de avance por fases: [`ESTADO.md`](ESTADO.md).
