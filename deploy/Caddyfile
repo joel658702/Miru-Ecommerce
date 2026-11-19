@@ -1,0 +1,26 @@
+# Caddy del VPS: TLS automático para el endpoint público de webhooks.
+#
+# Cambiar `api.miru.example` por el subdominio real cuando el dominio esté en
+# Hostinger. El DNS debe apuntar (A) a la IP del VPS antes de levantar Caddy.
+
+api.miru.example {
+	encode zstd gzip
+
+	# Solo el endpoint de ingesta y su health.
+	handle /health {
+		reverse_proxy ingest:3001
+	}
+
+	handle /webhooks/* {
+		reverse_proxy ingest:3001
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+
+	# Límite de body: el webhook máximo es 1 MiB.
+	request_body {
+		max_size 1MB
+	}
+}

@@ -1,0 +1,19 @@
+# Ingesta Miru v1 · imagen de producción
+FROM node:22-alpine AS base
+RUN corepack enable && corepack prepare pnpm@11.28.5 --activate
+WORKDIR /app
+
+# Manifiestos (capa cacheable)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY apps/ingest/package.json apps/ingest/
+RUN pnpm install --frozen-lockfile --filter @miru/ingest... --filter @miru/shared...
+
+# Código
+COPY packages/shared packages/shared
+COPY apps/ingest apps/ingest
+RUN pnpm --filter @miru/shared build && pnpm --filter @miru/ingest build
+
+ENV NODE_ENV=production
+EXPOSE 3001
+CMD ["node", "apps/ingest/dist/server.js"]

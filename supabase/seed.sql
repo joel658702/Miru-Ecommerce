@@ -15,21 +15,29 @@
 -- ---------------------------------------------------------------------------
 -- 1. Tenant y conexiones
 -- ---------------------------------------------------------------------------
+--
+-- El seed usa el PRIMER tenant (por fecha de creación). En local crea «Tienda
+-- Prueba» si la base está vacía; en producción se aplica sobre el tenant real
+-- (por ejemplo «Miru») sin crear tenants nuevos ni tocar membresías ajenas.
 
-insert into public.tenants (id, nombre)
-values ('44444444-4444-4444-4444-444444444444', 'Tienda Prueba')
-on conflict (id) do nothing;
+do $$
+begin
+  if not exists (select 1 from public.tenants) then
+    insert into public.tenants (id, nombre)
+    values ('44444444-4444-4444-4444-444444444444', 'Tienda Prueba');
+  end if;
+end $$;
 
 insert into public.connections (id, tenant_id, plataforma, estado, version_contrato)
 values
-  ('55555555-5555-5555-5555-555555555555', '44444444-4444-4444-4444-444444444444', 'Dropi', 'activa', 'miru.v1'),
-  ('66666666-6666-6666-6666-666666666666', '44444444-4444-4444-4444-444444444444', 'MasterShop', 'activa', 'miru.v1'),
-  ('77777777-7777-7777-7777-777777777777', '44444444-4444-4444-4444-444444444444', 'Effi', 'pausada', 'miru.v1')
+  ('55555555-5555-5555-5555-555555555555', (select id from public.tenants order by created_at limit 1), 'Dropi', 'activa', 'miru.v1'),
+  ('66666666-6666-6666-6666-666666666666', (select id from public.tenants order by created_at limit 1), 'MasterShop', 'activa', 'miru.v1'),
+  ('77777777-7777-7777-7777-777777777777', (select id from public.tenants order by created_at limit 1), 'Effi', 'pausada', 'miru.v1')
 on conflict (id) do nothing;
 
--- Los usuarios existentes quedan como owners del tenant de demo (RLS).
+-- Asegura que los usuarios existentes puedan ver el tenant de demo (RLS).
 insert into public.tenant_members (tenant_id, user_id, rol)
-select '44444444-4444-4444-4444-444444444444', u.id, 'owner'
+select (select id from public.tenants order by created_at limit 1), u.id, 'owner'
 from auth.users u
 on conflict (tenant_id, user_id) do nothing;
 
@@ -40,17 +48,17 @@ on conflict (tenant_id, user_id) do nothing;
 insert into public.products
   (tenant_id, sku, nombre, precio_venta_cents, costo_unitario_cents, stock, plataformas, activo)
 values
-  ('44444444-4444-4444-4444-444444444444', 'LAMP-LED-01', 'Lámpara LED Recargable', 8400000, 5000000, 120, array['Dropi','MasterShop'], true),
-  ('44444444-4444-4444-4444-444444444444', 'ORG-COC-04', 'Organizador Modular Cocina 4 Niveles', 12999000, 8000000, 80, array['Dropi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'AUDI-BT-02', 'Audífonos Bluetooth TWS', 6999000, 4200000, 150, array['MasterShop','Effi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'RELOJ-SM-03', 'Reloj Smartwatch Deportivo', 15999000, 10500000, 60, array['Dropi','Effi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'MASAJ-EL-05', 'Masajeador Eléctrico Portátil', 9999000, 6000000, 90, array['MasterShop'], true),
-  ('44444444-4444-4444-4444-444444444444', 'VENT-USB-06', 'Ventilador USB de Escritorio', 3999000, 2300000, 200, array['Dropi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'TERMO-AC-07', 'Termo de Acero 1 L', 5999000, 3500000, 140, array['Effi'], true),
-  ('44444444-4444-4444-4444-444444444444', 'ORGAN-PL-08', 'Organizador Plástico Apilable', 4499000, 2600000, 110, array['Dropi','MasterShop','Effi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'LAMP-LED-01', 'Lámpara LED Recargable', 8400000, 5000000, 120, array['Dropi','MasterShop'], true),
+  ((select id from public.tenants order by created_at limit 1), 'ORG-COC-04', 'Organizador Modular Cocina 4 Niveles', 12999000, 8000000, 80, array['Dropi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'AUDI-BT-02', 'Audífonos Bluetooth TWS', 6999000, 4200000, 150, array['MasterShop','Effi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'RELOJ-SM-03', 'Reloj Smartwatch Deportivo', 15999000, 10500000, 60, array['Dropi','Effi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'MASAJ-EL-05', 'Masajeador Eléctrico Portátil', 9999000, 6000000, 90, array['MasterShop'], true),
+  ((select id from public.tenants order by created_at limit 1), 'VENT-USB-06', 'Ventilador USB de Escritorio', 3999000, 2300000, 200, array['Dropi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'TERMO-AC-07', 'Termo de Acero 1 L', 5999000, 3500000, 140, array['Effi'], true),
+  ((select id from public.tenants order by created_at limit 1), 'ORGAN-PL-08', 'Organizador Plástico Apilable', 4499000, 2600000, 110, array['Dropi','MasterShop','Effi'], true),
   -- Inactivos: sirven para ver la rotación C (sin ventas en el período).
-  ('44444444-4444-4444-4444-444444444444', 'FUNDA-TB-09', 'Funda Tablet Universal', 3499000, 2000000, 25, array['Effi'], false),
-  ('44444444-4444-4444-4444-444444444444', 'CABLE-US-10', 'Cable USB-C 2 m', 1999000, 900000, 40, array['Dropi'], false)
+  ((select id from public.tenants order by created_at limit 1), 'FUNDA-TB-09', 'Funda Tablet Universal', 3499000, 2000000, 25, array['Effi'], false),
+  ((select id from public.tenants order by created_at limit 1), 'CABLE-US-10', 'Cable USB-C 2 m', 1999000, 900000, 40, array['Dropi'], false)
 on conflict (tenant_id, sku) do update
   set nombre = excluded.nombre,
       precio_venta_cents = excluded.precio_venta_cents,
@@ -108,7 +116,7 @@ insert into public.orders (
   shipping_cost_cents, gateway_fee_cents, novedad_detalle
 )
 select
-  '44444444-4444-4444-4444-444444444444',
+  (select id from public.tenants order by created_at limit 1),
   (array[
     '55555555-5555-5555-5555-555555555555',
     '66666666-6666-6666-6666-666666666666',

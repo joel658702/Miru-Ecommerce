@@ -121,7 +121,74 @@ entrega a las plataformas junto con el secreto HMAC ([`integraciones/MIRU_V1_TRA
 - [ ] Cabeceras de seguridad activas (`X-Content-Type-Options`, `Referrer-Policy`, etc.).
 - [ ] Dominio con HTTPS válido y HSTS de Vercel.
 
-## 6. Estándares y operación
+## 6. Servicios de integración en el VPS (Contabo)
+
+Vercel solo aloja la WebApp. La ingesta, el worker y Redis van en el VPS con Docker
+(`deploy/docker-compose.prod.yml`).
+
+### 6.1 Requisitos
+
+- IP pública del VPS y acceso SSH (`root` o usuario con sudo).
+- Docker Engine + plugin `docker compose` (v2).
+- Un subdominio para la ingesta, p. ej. `api.<dominio>`, con registro **A** apuntando a la IP del
+  VPS (se crea en Hostinger). Caddy emite el certificado TLS automáticamente.
+
+### 6.2 Preparar el servidor
+
+```bash
+# En el VPS
+apt update && apt install -y git curl
+curl -fsSL https://get.docker.com | sh
+ufw allow 22/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw --force enable
+
+git clone https://github.com/joel658702/Miru-Ecommerce.git /opt/miru
+cd /opt/miru
+cp deploy/env.prod.example deploy/.env.prod
+chmod 600 deploy/.env.prod
+# Editar deploy/.env.prod: SUPABASE_SERVICE_ROLE_KEY y MIRU_WEBHOOK_HMAC_SECRET
+# Editar deploy/Caddyfile: reemplazar api.miru.example por el subdominio real
+```
+
+### 6.3 Levantar el stack
+
+```bash
+docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.prod up -d --build
+docker compose -f deploy/docker-compose.prod.yml ps
+docker compose -f deploy/docker-compose.prod.yml logs -f ingest
+```
+
+Comprobaciones:
+
+- `curl http://127.0.0.1:3001/health` → `{"ok":true}` (solo desde el propio servidor).
+- `curl https://api.<dominio>/health` → `{"ok":true}` (por Caddy y con TLS).
+- El puerto 3001 **no** debe estar abierto al público.
+
+### 6.4 Conectar la WebApp
+
+1. En Vercel, agregar `NEXT_PUBLIC_INGEST_URL=https://api.<dominio>` (Production y Preview).
+2. Redeploy para que el build la tome (`vercel --prod` o push a `main`).
+3. `/conexiones` debe mostrar la URL completa del webhook por canal.
+
+### 6.5 Prueba de humo de la integración
+
+```bash
+# Desde tu máquina, con un connection_id real de la tabla connections
+pnpm webhook:sign docs/integraciones/ejemplo-order.upserted.json "$MIRU_WEBHOOK_HMAC_SECRET"
+# Copiar el curl que imprime el script y apuntarlo a https://api.<dominio>/webhooks/miru/v1/<id>
+```
+
+Debe responder `200 accepted`, aparecer la fila en `webhook_events` y el pedido en el panel.
+
+### 6.6 Operación
+
+- **Actualizar:** `cd /opt/miru && git pull && docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.prod up -d --build`.
+- **Logs:** `docker compose ... logs -f worker` (los rechazos de webhooks se ven en `process_error`).
+- **Persistencia:** Redis usa el volumen `redis-data` con AOF; los eventos críticos ya están en
+  Supabase, Redis es solo la cola.
+- **Reinicio automático:** `restart: unless-stopped` en todos los servicios.
+- **Firewall:** solo 22/80/443 públicos; 3001 en `127.0.0.1`.
+
+## 7. Estándares y operación
 
 - **Secretos:** solo en variables de entorno; rotar el HMAC por canal cada 90 días o ante
   cualquier sospecha. `service_role` nunca se comparte con la plataforma de origen.

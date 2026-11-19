@@ -1,0 +1,21 @@
+# Dependencias y artefactos (se instalan dentro de la imagen)
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/*.tsbuildinfo
+
+# Entorno (nunca dentro de la imagen)
+.env
+.env.*
+!.env.example
+deploy/.env.prod
+
+# Repo y documentación
+.git
+.github
+docs
+supabase
+*.log
+*.md
