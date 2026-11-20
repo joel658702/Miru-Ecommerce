@@ -25,7 +25,11 @@ export function FilterBar({
   return (
     <div className="flex flex-wrap items-center gap-2.5">
       {/* Platform Multi-select Buttons */}
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por plataforma">
+      <div
+        className="flex flex-wrap items-center gap-1.5"
+        role="group"
+        aria-label="Filtrar por plataforma"
+      >
         {PLATFORMS.map((platform) => {
           const isSelected = selectedPlatforms.includes(platform);
           return (
@@ -45,7 +49,7 @@ export function FilterBar({
                   isSelected
                     ? "bg-white"
                     : platform === "Dropi"
-                      ? "bg-[#4F46E5]"
+                      ? "bg-[var(--color-plataforma-dropi-dot)]"
                       : platform === "MasterShop"
                         ? "bg-[#059669]"
                         : "bg-[#0284C7]"
@@ -86,7 +90,12 @@ export function FilterBar({
           className="inline-flex min-h-[44px] md:min-h-[36px] items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[var(--color-neutral-600)] hover:bg-[var(--color-neutral-100)] hover:text-[var(--color-neutral-900)] cursor-pointer transition-colors"
         >
           <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
           <span>Limpiar filtros</span>
         </button>

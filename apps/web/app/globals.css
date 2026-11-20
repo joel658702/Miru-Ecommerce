@@ -7,139 +7,139 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* Colores Primarios y Acentos */
-  --color-primary: #006A6A;
+  --color-primary: #006a6a;
   --color-primary-hover: #005556;
-  --color-primary-container: #00D2D3;
+  --color-primary-container: #00d2d3;
   --color-primary-on-container: #002020;
-  --color-primary-bright: #0891B2;
-  --color-on-primary: #FFFFFF;
+  --color-primary-bright: #0891b2;
+  --color-on-primary: #ffffff;
 
-  --color-accent-emerald: #10B981;
-  --color-accent-emerald-dark: #006C49;
-  --color-accent-emerald-container: #6CF8BB;
-  --color-accent-cyan: #00D2D3;
-  --color-accent-amber: #F59E0B;
+  --color-accent-emerald: #10b981;
+  --color-accent-emerald-dark: #006c49;
+  --color-accent-emerald-container: #6cf8bb;
+  --color-accent-cyan: #00d2d3;
+  --color-accent-amber: #f59e0b;
   --color-accent-amber-dark: #855300;
 
   /* Escala Neutral (50..900) */
-  --color-neutral-50: #F8FAFC;
-  --color-neutral-100: #F1F5F9;
-  --color-neutral-200: #E2E8F0;
-  --color-neutral-300: #CBD5E1;
-  --color-neutral-400: #94A3B8;
-  --color-neutral-500: #64748B;
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
   --color-neutral-600: #475569;
   --color-neutral-700: #334155;
-  --color-neutral-800: #1E293B;
-  --color-neutral-900: #0F172A;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
 
   /* Superficies */
-  --color-surface-canvas: #F8FAFC;
-  --color-surface-card: #FFFFFF;
-  --color-surface-subdued: #F1F5F9;
-  --color-surface-elevated: #FAF8FF;
-  --color-surface-inverse: #131B2E;
-  --color-border-subtle: #E2E8F0;
-  --color-border-interactive: #CBD5E1;
+  --color-surface-canvas: #f8fafc;
+  --color-surface-card: #ffffff;
+  --color-surface-subdued: #f1f5f9;
+  --color-surface-elevated: #faf8ff;
+  --color-surface-inverse: #131b2e;
+  --color-border-subtle: #e2e8f0;
+  --color-border-interactive: #cbd5e1;
 
   /* Semánticos */
-  --color-success-bg: #ECFDF5;
+  --color-success-bg: #ecfdf5;
   --color-success-text: #047857;
-  --color-success-border: #A7F3D0;
+  --color-success-border: #a7f3d0;
   --color-success-solid: #059669;
 
-  --color-warning-bg: #FFFBEB;
-  --color-warning-text: #B45309;
-  --color-warning-border: #FDE68A;
-  --color-warning-solid: #D97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-text: #b45309;
+  --color-warning-border: #fde68a;
+  --color-warning-solid: #d97706;
 
-  --color-danger-bg: #FEF2F2;
-  --color-danger-text: #B91C1C;
-  --color-danger-border: #FECACA;
-  --color-danger-solid: #DC2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-text: #b91c1c;
+  --color-danger-border: #fecaca;
+  --color-danger-solid: #dc2626;
 
-  --color-info-bg: #ECFEFF;
-  --color-info-text: #0E7490;
-  --color-info-border: #A5F3FC;
-  --color-info-solid: #0891B2;
+  --color-info-bg: #ecfeff;
+  --color-info-text: #0e7490;
+  --color-info-border: #a5f3fc;
+  --color-info-solid: #0891b2;
 
   /* Estados Exactos: Pedido */
-  --color-pedido-pendiente-bg: #F1F5F9;
+  --color-pedido-pendiente-bg: #f1f5f9;
   --color-pedido-pendiente-text: #334155;
-  --color-pedido-pendiente-border: #CBD5E1;
-  --color-pedido-pendiente-dot: #64748B;
+  --color-pedido-pendiente-border: #cbd5e1;
+  --color-pedido-pendiente-dot: #64748b;
 
-  --color-pedido-confirmado-bg: #EFF6FF;
-  --color-pedido-confirmado-text: #1D4ED8;
-  --color-pedido-confirmado-border: #BFDBFE;
-  --color-pedido-confirmado-dot: #2563EB;
+  --color-pedido-confirmado-bg: #eff6ff;
+  --color-pedido-confirmado-text: #1d4ed8;
+  --color-pedido-confirmado-border: #bfdbfe;
+  --color-pedido-confirmado-dot: #2563eb;
 
-  --color-pedido-en-transito-bg: #ECFEFF;
-  --color-pedido-en-transito-text: #0E7490;
-  --color-pedido-en-transito-border: #A5F3FC;
-  --color-pedido-en-transito-dot: #0891B2;
+  --color-pedido-en-transito-bg: #ecfeff;
+  --color-pedido-en-transito-text: #0e7490;
+  --color-pedido-en-transito-border: #a5f3fc;
+  --color-pedido-en-transito-dot: #0891b2;
 
-  --color-pedido-entregado-bg: #ECFDF5;
+  --color-pedido-entregado-bg: #ecfdf5;
   --color-pedido-entregado-text: #047857;
-  --color-pedido-entregado-border: #A7F3D0;
+  --color-pedido-entregado-border: #a7f3d0;
   --color-pedido-entregado-dot: #059669;
 
-  --color-pedido-devuelto-bg: #FFF7ED;
-  --color-pedido-devuelto-text: #C2410C;
-  --color-pedido-devuelto-border: #FED7AA;
-  --color-pedido-devuelto-dot: #EA580C;
+  --color-pedido-devuelto-bg: #fff7ed;
+  --color-pedido-devuelto-text: #c2410c;
+  --color-pedido-devuelto-border: #fed7aa;
+  --color-pedido-devuelto-dot: #ea580c;
 
-  --color-pedido-cancelado-bg: #FEF2F2;
-  --color-pedido-cancelado-text: #B91C1C;
-  --color-pedido-cancelado-border: #FECACA;
-  --color-pedido-cancelado-dot: #DC2626;
+  --color-pedido-cancelado-bg: #fef2f2;
+  --color-pedido-cancelado-text: #b91c1c;
+  --color-pedido-cancelado-border: #fecaca;
+  --color-pedido-cancelado-dot: #dc2626;
 
-  --color-pedido-novedad-bg: #FFFBEB;
-  --color-pedido-novedad-text: #B45309;
-  --color-pedido-novedad-border: #FDE68A;
-  --color-pedido-novedad-dot: #D97706;
+  --color-pedido-novedad-bg: #fffbeb;
+  --color-pedido-novedad-text: #b45309;
+  --color-pedido-novedad-border: #fde68a;
+  --color-pedido-novedad-dot: #d97706;
 
   /* Estados Exactos: Garantía */
-  --color-garantia-solicitada-bg: #F1F5F9;
+  --color-garantia-solicitada-bg: #f1f5f9;
   --color-garantia-solicitada-text: #334155;
-  --color-garantia-solicitada-border: #CBD5E1;
-  --color-garantia-solicitada-dot: #64748B;
+  --color-garantia-solicitada-border: #cbd5e1;
+  --color-garantia-solicitada-dot: #64748b;
 
-  --color-garantia-en-revision-bg: #ECFEFF;
-  --color-garantia-en-revision-text: #0E7490;
-  --color-garantia-en-revision-border: #A5F3FC;
-  --color-garantia-en-revision-dot: #0891B2;
+  --color-garantia-en-revision-bg: #ecfeff;
+  --color-garantia-en-revision-text: #0e7490;
+  --color-garantia-en-revision-border: #a5f3fc;
+  --color-garantia-en-revision-dot: #0891b2;
 
-  --color-garantia-aprobada-bg: #ECFDF5;
+  --color-garantia-aprobada-bg: #ecfdf5;
   --color-garantia-aprobada-text: #047857;
-  --color-garantia-aprobada-border: #A7F3D0;
+  --color-garantia-aprobada-border: #a7f3d0;
   --color-garantia-aprobada-dot: #059669;
 
-  --color-garantia-rechazada-bg: #FEF2F2;
-  --color-garantia-rechazada-text: #B91C1C;
-  --color-garantia-rechazada-border: #FECACA;
-  --color-garantia-rechazada-dot: #DC2626;
+  --color-garantia-rechazada-bg: #fef2f2;
+  --color-garantia-rechazada-text: #b91c1c;
+  --color-garantia-rechazada-border: #fecaca;
+  --color-garantia-rechazada-dot: #dc2626;
 
-  --color-garantia-reembolsada-bg: #EFF6FF;
-  --color-garantia-reembolsada-text: #1D4ED8;
-  --color-garantia-reembolsada-border: #BFDBFE;
-  --color-garantia-reembolsada-dot: #2563EB;
+  --color-garantia-reembolsada-bg: #eff6ff;
+  --color-garantia-reembolsada-text: #1d4ed8;
+  --color-garantia-reembolsada-border: #bfdbfe;
+  --color-garantia-reembolsada-dot: #2563eb;
 
   /* Tokens de Plataforma (completados para evitar colores hardcodeados) */
-  --color-plataforma-dropi-bg: #EEF2FF;
-  --color-plataforma-dropi-text: #3730A3;
-  --color-plataforma-dropi-border: #C7D2FE;
-  --color-plataforma-dropi-dot: #4F46E5;
+  --color-plataforma-dropi-bg: #fff7ed;
+  --color-plataforma-dropi-text: #9a3412;
+  --color-plataforma-dropi-border: #fdba74;
+  --color-plataforma-dropi-dot: #ea580c;
 
-  --color-plataforma-mastershop-bg: #ECFDF5;
+  --color-plataforma-mastershop-bg: #ecfdf5;
   --color-plataforma-mastershop-text: #047857;
-  --color-plataforma-mastershop-border: #A7F3D0;
+  --color-plataforma-mastershop-border: #a7f3d0;
   --color-plataforma-mastershop-dot: #059669;
 
-  --color-plataforma-effi-bg: #F0F9FF;
-  --color-plataforma-effi-text: #0369A1;
-  --color-plataforma-effi-border: #BAE6FD;
-  --color-plataforma-effi-dot: #0284C7;
+  --color-plataforma-effi-bg: #f0f9ff;
+  --color-plataforma-effi-text: #0369a1;
+  --color-plataforma-effi-border: #bae6fd;
+  --color-plataforma-effi-dot: #0284c7;
 
   /* Espaciado (escala base 4px) */
   --spacing-0: 0px;
@@ -221,11 +221,13 @@ body {
 }
 
 .miru-brand-gradient {
-  background: linear-gradient(135deg, #10B981 0%, #00D2D3 55%, #F59E0B 100%);
+  background: linear-gradient(135deg, #10b981 0%, #00d2d3 55%, #f59e0b 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
+  *,
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
