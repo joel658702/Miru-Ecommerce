@@ -3,6 +3,10 @@
 Documento preparado por **Miru-Ecommerce** para la revisión técnica y la autorización
 de la conexión. Fecha: 19-nov-2026.
 
+> **Perfil técnico completo para su área de seguridad:**
+> [`dropi-perfil-tecnico.md`](dropi-perfil-tecnico.md) (arquitectura, stack,
+> controles, límites declarados y cuestionario de seguridad respondido).
+
 ## 1. Qué es Miru-Ecommerce
 
 Plataforma centralizada de **pedidos, garantías, transportadoras y finanzas** para
