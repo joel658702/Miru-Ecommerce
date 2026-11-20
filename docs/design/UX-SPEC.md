@@ -37,6 +37,8 @@ Los datos son ficticios y no hay autenticación. Lo que cambia con datos reales 
    Utilidad neta, Pedidos totales, Entregados, Devueltos, Garantías abiertas.
 2. **Flujo logístico — últimos 7 días**: barras SVG (despachados vs entregados) con leyenda.
 3. **Participación por plataforma**: barra segmentada + leyenda con `StatusChip` de plataforma.
+   Colores por canal: **Dropi naranja** (`#EA580C`), **MasterShop verde** (`#059669`),
+   **Effi azul** (`#0284C7`). Se aplican a chips, filtros y gráficas.
 4. **Pedidos que requieren gestión**: lista corta + enlace «Ver todos los pedidos (n)».
 5. **Nota de sincronización**: explica que la ingesta canónica valida HMAC en < 500 ms.
 
