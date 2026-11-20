@@ -110,11 +110,12 @@ https://api.miruecommerce.pro/webhooks/mastershop/<connection_id>?token=<token>
 MasterShop envía, Miru recibe y procesa. Es el flujo natural de su plataforma y no
 requiere que ustedes expongan nada más.
 
-### B — Servidor MCP (opcional, a implementar)
+### B — Servidor MCP (solo lectura, disponible)
 
-Podemos exponer un servidor **MCP (Model Context Protocol)** de **solo lectura** para
-que sus herramientas/agentes consulten pedidos, stock y garantías de la cuenta
-conectada, con token revocable y TLS. Hoy no está implementado; se acuerda alcance.
+Endpoint `https://api.miruecommerce.pro/mcp` (Streamable HTTP) con token Bearer:
+herramientas `orders_list`, `orders_get`, `products_stock`, `warranties_list` y
+`finance_summary`. Solo lectura, aislado por tenant y revocable. Es una alternativa a
+los webhooks, no un reemplazo de la suscripción.
 
 ### C — Pull por API
 

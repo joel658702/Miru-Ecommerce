@@ -61,21 +61,20 @@ Content-Type: application/json
 - Contrato, ejemplo y vector de firma se entregan con esta ficha.
 - Si Effi no emite webhooks, se usa la opción C.
 
-### B — Servidor MCP (opcional, a implementar)
+### B — Servidor MCP (solo lectura, disponible)
 
-Servidor **MCP (Model Context Protocol)** sobre HTTPS, de **solo lectura**, para que
-sus herramientas/agentes consulten pedidos, stock, garantías y métricas de la cuenta
-conectada:
+Endpoint `https://api.miruecommerce.pro/mcp` (Streamable HTTP) con token Bearer:
 
-| Herramienta                  | Devuelve               |
-| ---------------------------- | ---------------------- |
-| `orders.list` / `orders.get` | Pedidos y detalle      |
-| `products.stock`             | Stock y precio por SKU |
-| `warranties.list`            | Garantías por estado   |
-| `finance.summary`            | Ventas, fee y utilidad |
+| Herramienta       | Devuelve               |
+| ----------------- | ---------------------- |
+| `orders_list`     | Pedidos con filtros    |
+| `orders_get`      | Detalle de un pedido   |
+| `products_stock`  | Stock y precio por SKU |
+| `warranties_list` | Garantías por estado   |
+| `finance_summary` | Ventas, fee y utilidad |
 
-- Autenticación por token revocable + TLS.
-- **No implementado todavía**; se acuerda alcance y fecha.
+- Token revocable por conexión + TLS.
+- Disponible hoy; solo lectura y aislado por tenant.
 
 ### C — Pull por API (si Effi expone REST)
 

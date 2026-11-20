@@ -68,23 +68,22 @@ Content-Type: application/json
   (`ESPECIFICACION_MIRU_V1.md` y `ejemplo-order.upserted.json`).
 - Si Dropi **no puede emitir webhooks**, nosotros podemos consultar su API (opción C).
 
-### Opción B — Servidor MCP (opcional, a implementar)
+### Opción B — Servidor MCP (solo lectura, disponible)
 
-Podemos exponer un **servidor MCP (Model Context Protocol)** sobre HTTPS para que sus
-herramientas o agentes consulten información **de solo lectura** de la cuenta conectada:
+Endpoint: `https://api.miruecommerce.pro/mcp` (Streamable HTTP, autenticación
+`Authorization: Bearer <token>`). Expone **solo lectura** de la cuenta conectada:
 
-| Herramienta MCP propuesta | Qué devuelve                           |
-| ------------------------- | -------------------------------------- |
-| `orders.list`             | Pedidos filtrados por estado y fecha   |
-| `orders.get`              | Detalle de un pedido por `external_id` |
-| `products.stock`          | Stock y precio por SKU                 |
-| `warranties.list`         | Garantías por estado                   |
-| `finance.summary`         | Ventas, fee y utilidad por período     |
+| Herramienta MCP   | Qué devuelve                            |
+| ----------------- | --------------------------------------- |
+| `orders_list`     | Pedidos filtrados por estado/plataforma |
+| `orders_get`      | Detalle de un pedido por `external_id`  |
+| `products_stock`  | Stock y precio por SKU                  |
+| `warranties_list` | Garantías por estado                    |
+| `finance_summary` | Ventas, fee y utilidad por período      |
 
-- Autenticación: token de larga duración por conexión (revocable) + TLS.
-- Alcance: **solo lectura**; sin escritura de pedidos ni datos personales masivos.
-- Estado: **no implementado todavía**; se entrega como extensión si su lado lo requiere.
-- Costo/tiempo: acordar alcance antes de habilitarlo.
+- Token revocable por conexión, entregado por canal privado.
+- Alcance: **solo lectura**; no escribe pedidos ni expone datos de otros tenants.
+- Disponible hoy; se entrega el token al autorizar la conexión.
 
 ### Opción C — Consulta a la API de Dropi (si aplica)
 

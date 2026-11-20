@@ -53,6 +53,7 @@ Registro **vivo** del avance por fases. Las decisiones no se repiten aquí: vive
 | Rate limit de ingesta              | 120 req/min por IP; al exceder responde **429** con `retry-after`                                                |
 | Fichas por plataforma              | `docs/integraciones/plataformas/`: ficha técnica y de seguridad + qué ofrecemos y necesitamos de cada plataforma |
 | Paquete para plataformas           | `docs/integraciones/PAQUETE_PLATAFORMAS/`: spec, ejemplo, correo y checklist                                     |
+| Servidor MCP                       | `https://api.miruecommerce.pro/mcp` con 5 herramientas de solo lectura; sin token → **401**                      |
 
 ## 2. Fases
 
